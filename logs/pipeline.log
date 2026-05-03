@@ -1,0 +1,92 @@
+2026-05-03 11:33:34 | INFO     | src.pipeline | ╔══════════════════════════════════════════════════════════╗
+2026-05-03 11:33:34 | INFO     | src.pipeline | ║          BANK TRANSACTIONS — ETL PIPELINE                ║
+2026-05-03 11:33:34 | INFO     | src.pipeline | ╚══════════════════════════════════════════════════════════╝
+2026-05-03 11:33:34 | INFO     | src.pipeline | Input  : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/raw/bank_transactions.csv
+2026-05-03 11:33:34 | INFO     | src.pipeline | Output : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/processed/clean.csv
+2026-05-03 11:33:34 | INFO     | src.pipeline | ── STEP 1 / 3 : EXTRACT ────────────────────────────────────
+2026-05-03 11:33:34 | INFO     | src.extract | Loading raw data from: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/raw/bank_transactions.csv
+2026-05-03 11:33:35 | INFO     | src.extract | Loaded 1,048,567 rows × 9 columns
+2026-05-03 11:33:35 | INFO     | src.extract | Computing customer stats on raw data (before any drops)
+2026-05-03 11:33:36 | INFO     | src.extract |   Unique customers: 884,265
+2026-05-03 11:33:36 | INFO     | src.extract |   customer_freq — min: 1, max: 6, mean: 1.19
+2026-05-03 11:33:36 | INFO     | src.pipeline | ── STEP 2 / 3 : TRANSFORM ──────────────────────────────────
+2026-05-03 11:33:36 | INFO     | src.transform | ============================================================
+2026-05-03 11:33:36 | INFO     | src.transform | START TRANSFORM
+2026-05-03 11:33:36 | INFO     | src.transform | ============================================================
+2026-05-03 11:33:37 | INFO     | src.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
+2026-05-03 11:33:37 | INFO     | src.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
+2026-05-03 11:33:37 | INFO     | src.transform | [Missing] Columns with nulls:
+customer_dob            3397
+cust_gender             1100
+cust_location            151
+cust_account_balance    2369
+2026-05-03 11:33:37 | INFO     | src.transform | [Missing] Dropped 6,953 rows with nulls — 1,041,614 remaining
+2026-05-03 11:34:00 | INFO     | src.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
+2026-05-03 11:34:00 | INFO     | src.transform | [Types] Invalid TransactionTime values: 0
+2026-05-03 11:35:01 | INFO     | src.transform | [Types] Conversion complete
+2026-05-03 11:35:01 | INFO     | src.transform | [Unique] transaction_id: unique
+2026-05-03 11:35:02 | INFO     | src.transform | [Unique] Unique customers: 879,358 / 1,041,614 rows
+2026-05-03 11:35:03 | WARNING  | src.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
+2026-05-03 11:35:03 | WARNING  | src.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
+2026-05-03 11:35:03 | WARNING  | src.transform | [KYC] Mining conclusions reflect customers with verified identity only
+2026-05-03 11:35:03 | INFO     | src.transform | [KYC] Remaining: 739,899 rows
+2026-05-03 11:35:04 | INFO     | src.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
+2026-05-03 11:35:04 | INFO     | src.transform | [Gender] Distribution:
+cust_gender
+M    540772
+F    199126
+2026-05-03 11:35:04 | INFO     | src.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
+2026-05-03 11:35:04 | INFO     | src.transform | [Location] Top 5 after merge:
+cust_location
+DELHI        109558
+MUMBAI        72329
+BANGALORE     57729
+GURGAON       52606
+NOIDA         23200
+2026-05-03 11:35:04 | INFO     | src.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
+2026-05-03 11:35:04 | INFO     | src.transform | [Age] Stats — min:0, max:89, mean:30.7
+2026-05-03 11:35:04 | INFO     | src.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
+2026-05-03 11:35:04 | INFO     | src.transform | [Stats] Merged customer stats — shape: (699261, 18)
+2026-05-03 11:35:04 | INFO     | src.transform | [Stats] customer_freq — mean: 1.00, max: 3
+2026-05-03 11:35:04 | INFO     | src.transform | [Encode] Age groups:
+age_category
+<18        1337
+18-24    155992
+25-34    375709
+35-44    114736
+45-54     33627
+55-64     12409
+65+        5451
+2026-05-03 11:35:05 | INFO     | src.transform | [Encode] Location groups (top 15 + OTHER):
+location_grouped
+OTHER          278825
+DELHI          101605
+MUMBAI          69208
+BANGALORE       55119
+GURGAON         50362
+NOIDA           22512
+CHENNAI         19571
+PUNE            17132
+HYDERABAD       15541
+THANE           14861
+KOLKATA         13419
+GHAZIABAD       10404
+NAVI MUMBAI      8558
+AHMEDABAD        8019
+FARIDABAD        7564
+JAIPUR           6561
+2026-05-03 11:35:05 | INFO     | src.transform | [OHE] Shape after encoding + drop: (699261, 28)
+2026-05-03 11:35:05 | INFO     | src.transform | [OHE] Columns: ['customer_id', 'cust_account_balance', 'transaction_amount_inr', 'transaction_month', 'is_weekend', 'customer_freq', 'age_ordinal', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE']
+2026-05-03 11:35:08 | INFO     | src.transform | [Norm] Yeo-Johnson applied to: ['cust_account_balance', 'transaction_amount_inr', 'customer_freq', 'age_ordinal', 'transaction_month']
+2026-05-03 11:35:08 | INFO     | src.transform | [Corr] Dropped correlated features: []
+2026-05-03 11:35:08 | INFO     | src.transform | ============================================================
+2026-05-03 11:35:08 | INFO     | src.transform | TRANSFORM COMPLETE — final shape: (699261, 28)
+2026-05-03 11:35:08 | INFO     | src.transform | ============================================================
+2026-05-03 11:35:08 | INFO     | src.pipeline | ── STEP 3 / 3 : LOAD ───────────────────────────────────────
+2026-05-03 11:35:08 | INFO     | src.load | [Load] Output path: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/processed/clean.csv
+2026-05-03 11:35:08 | INFO     | src.load | [Validate] All checks passed ✓
+2026-05-03 11:35:13 | INFO     | src.load | [Load] Exported 699,261 rows × 28 columns (92.7 MB)
+2026-05-03 11:35:13 | INFO     | src.load | [Load] Columns: ['customer_id', 'is_weekend', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized', 'transaction_month_normalized']
+2026-05-03 11:35:13 | INFO     | src.pipeline | ╔══════════════════════════════════════════════════════════╗
+2026-05-03 11:35:13 | INFO     | src.pipeline | ║  PIPELINE COMPLETE — 99.1s                              ║
+2026-05-03 11:35:13 | INFO     | src.pipeline | ╚══════════════════════════════════════════════════════════╝
