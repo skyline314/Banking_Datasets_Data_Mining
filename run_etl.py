@@ -15,7 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from config.config import RAW_DATA_PATH, PROCESSED_DATA_PATH
-from src.pipeline  import run
+from src.stage1_ETL.pipeline  import run
 
 
 def parse_args():

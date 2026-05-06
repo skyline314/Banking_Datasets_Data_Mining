@@ -7,9 +7,9 @@ import time
 import traceback
 from pathlib import Path
 
-from src.extract   import extract
-from src.transform import transform
-from src.load      import load
+from src.stage1_ETL.extract   import extract
+from src.stage1_ETL.transform import transform
+from src.stage1_ETL.load      import load
 from src.logger    import get_logger
 
 log = get_logger(__name__)

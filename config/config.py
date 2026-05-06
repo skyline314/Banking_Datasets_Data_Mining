@@ -10,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 
 # ── Data paths ────────────────────────────────────────────────────────────────
 RAW_DATA_PATH       = ROOT_DIR / "data" / "raw"       / "bank_transactions.csv"
-PROCESSED_DATA_PATH = ROOT_DIR / "data" / "processed" / "clean.csv"
+PROCESSED_DATA_PATH = ROOT_DIR / "data" / "stage1_ETL" / "clean.csv"
 LOG_DIR             = ROOT_DIR / "logs"
 
 # ── KYC fields — never imputed, only dropped if inconsistent ─────────────────
