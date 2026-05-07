@@ -13,6 +13,10 @@ RAW_DATA_PATH       = ROOT_DIR / "data" / "raw"       / "bank_transactions.csv"
 PROCESSED_DATA_PATH = ROOT_DIR / "data" / "stage1_ETL" / "clean.csv"
 LOG_DIR             = ROOT_DIR / "logs"
 
+# ── Stage 2: Clustering ──────────────────────────────────────────────────────
+CLUSTERING_INPUT_PATH  = PROCESSED_DATA_PATH          # reads clean.csv from stage 1
+CLUSTERING_OUTPUT_DIR  = ROOT_DIR / "data" / "stage2_Clustering"
+
 # ── KYC fields — never imputed, only dropped if inconsistent ─────────────────
 KYC_FIELDS = ["customer_dob", "cust_gender"]
 
