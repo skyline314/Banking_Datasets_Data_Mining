@@ -18,49 +18,48 @@ log = get_logger(__name__)
 CLUSTER_PERSONAS = {
     0: {
         "name": "High-Value Established Customers",
-        "subtitle": "Nasabah Mapan Bersaldo Tinggi",
+        "subtitle": "Established High-Balance Customers",
         "description": (
-            "Segmen ini diisi oleh nasabah dewasa dengan umur di atas rata-rata. "
-            "Mereka memiliki Saldo Akun yang sangat kuat dan terbiasa melakukan "
-            "transaksi dengan nominal yang paling besar."
+            "This segment consists of mature customers with above-average ages. "
+            "They have very strong account balances and are accustomed to making "
+            "transactions with the largest denominations."
         ),
         "actionable_insight": (
-            "Ini adalah nasabah premium bank. Bank bisa memprioritaskan penawaran "
-            "produk Wealth Management, investasi, deposito bunga tinggi, atau kartu "
-            "kredit premium kepada segmen ini untuk memaksimalkan Customer Lifetime "
-            "Value (CLV)."
+            "These are the bank's premium customers. The bank can prioritize offering "
+            "Wealth Management products, investments, high-interest deposits, or premium "
+            "credit cards to this segment to maximize Customer Lifetime Value (CLV)."
         ),
     },
     1: {
         "name": "Youth / Entry-Level Segment",
-        "subtitle": "Gen-Z & Pelajar",
+        "subtitle": "Gen-Z & Students",
         "description": (
-            "Segmen nasabah yang berumur sangat muda atau paling jauh di bawah "
-            "rata-rata. Sesuai dengan usianya, saldo tabungan mereka tergolong "
-            "rendah dan nominal transaksi harian mereka juga bernilai kecil."
+            "This segment consists of very young customers, significantly below the "
+            "average age. Consistent with their age, their savings balances are relatively "
+            "low, and their daily transaction amounts are also small."
         ),
         "actionable_insight": (
-            "Pendekatan bisnis yang cocok untuk segmen mahasiswa/first-jobber ini "
-            "adalah menawarkan promo cashback merchant lifestyle (F&B, hiburan), "
-            "integrasi e-wallet, atau tabungan bebas biaya admin untuk mengakuisisi "
-            "loyalitas mereka sejak dini sebelum mereka memiliki kapabilitas "
-            "finansial yang lebih besar di masa depan."
+            "A suitable business approach for this student/first-jobber segment is "
+            "offering lifestyle merchant cashback promos (F&B, entertainment), "
+            "e-wallet integration, or admin-fee-free savings accounts to acquire "
+            "their loyalty early before they gain greater financial capabilities "
+            "in the future."
         ),
     },
     2: {
         "name": "Low-Value Mass Market",
-        "subtitle": "Nasabah Massal Pasif",
+        "subtitle": "Passive Mass Market Customers",
         "description": (
-            "Mayoritas nasabah bank berada di klaster ini. Umur mereka standar/"
-            "sedikit di atas rata-rata, namun saldo akun mereka cenderung sangat "
-            "minim dan nominal transaksi mereka paling rendah."
+            "The majority of the bank's customers fall into this cluster. Their age "
+            "is standard or slightly above average, but their account balances tend "
+            "to be very minimal and their transaction amounts are the lowest."
         ),
         "actionable_insight": (
-            "Segmen massal ini kemungkinan menggunakan rekening hanya sebagai jalur "
-            "lewat dana (misal: menerima gaji lalu langsung ditarik habis). Bank "
-            "perlu mengedukasi segmen ini untuk mulai menabung, mengadakan program "
-            "undian berdasarkan saldo mengendap, atau menawarkan pinjaman tunai / "
-            "paylater mikro jika mereka membutuhkan likuiditas cepat."
+            "This mass segment likely uses their accounts only as a transit for "
+            "funds (e.g., receiving salary and then immediately withdrawing it all). "
+            "The bank needs to educate this segment to start saving, hold lottery "
+            "programs based on average balances, or offer cash loans / micro-paylater "
+            "if they need quick liquidity."
         ),
     },
 }
@@ -87,8 +86,8 @@ def build_and_export_profiles(df_cluster: pd.DataFrame,
     # Calculate the mean of the normalized features for each cluster
     cluster_profiles_norm = df_cluster.groupby('Cluster_Labels')[FEATURES].mean()
 
-    # Kembalikan nilai ke skala asli menggunakan inverse_transform
-    # agar mudah diinterpretasikan
+    # Return values to original scale using inverse_transform
+    # for easier interpretation
     unscaled_means = scaler.inverse_transform(cluster_profiles_norm)
     unscaled_features = [f.replace('_normalized', '') for f in FEATURES]
     cluster_profiles_real = pd.DataFrame(
@@ -97,7 +96,7 @@ def build_and_export_profiles(df_cluster: pd.DataFrame,
         index=cluster_profiles_norm.index,
     ).round(2)
 
-    # Menambahkan jumlah nasabah per klaster
+    # Add customer count per cluster
     cluster_sizes = df_cluster['Cluster_Labels'].value_counts()
     cluster_profiles_real['Customer_Count'] = cluster_sizes
 
@@ -117,9 +116,9 @@ def build_and_export_profiles(df_cluster: pd.DataFrame,
     # Fallback persona for clusters without a predefined interpretation
     _DEFAULT_PERSONA = {
         "name": "Unclassified Segment",
-        "subtitle": "Segmen Belum Terklasifikasi",
-        "description": "Segmen ini belum memiliki interpretasi bisnis yang telah ditentukan.",
-        "actionable_insight": "Diperlukan analisis lebih lanjut untuk menentukan strategi bisnis.",
+        "subtitle": "Unclassified Segment",
+        "description": "This segment does not yet have a predefined business interpretation.",
+        "actionable_insight": "Further analysis is required to determine the business strategy.",
     }
 
     for cluster_id in sorted(cluster_profiles_real.index):
