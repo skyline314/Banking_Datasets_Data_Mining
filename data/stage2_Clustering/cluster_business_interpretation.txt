@@ -1,0 +1,40 @@
+============================================================
+CLUSTER BUSINESS PROFILES -- DETAILED REPORT
+============================================================
+
+Cluster 0: "High-Value Established Customers" (Established High-Balance Customers)
+------------------------------------------------------------
+  Population  : 260,931 customers
+  age_ordinal                             : +0.60
+  cust_account_balance                    : +0.75
+  transaction_amount_inr                  : +0.76
+  customer_freq                           : +0.00
+
+  Description : This segment consists of mature customers with above-average ages. They have very strong account balances and are accustomed to making transactions with the largest denominations.
+  Actionable  : These are the bank's premium customers. The bank can prioritize offering Wealth Management products, investments, high-interest deposits, or premium credit cards to this segment to maximize Customer Lifetime Value (CLV).
+
+Cluster 1: "Youth / Entry-Level Segment" (Gen-Z & Students)
+------------------------------------------------------------
+  Population  : 153,079 customers
+  age_ordinal                             : -1.49
+  cust_account_balance                    : -0.40
+  transaction_amount_inr                  : -0.40
+  customer_freq                           : +0.00
+
+  Description : This segment consists of very young customers, significantly below the average age. Consistent with their age, their savings balances are relatively low, and their daily transaction amounts are also small.
+  Actionable  : A suitable business approach for this student/first-jobber segment is offering lifestyle merchant cashback promos (F&B, entertainment), e-wallet integration, or admin-fee-free savings accounts to acquire their loyalty early before they gain greater financial capabilities in the future.
+
+Cluster 2: "Low-Value Mass Market" (Passive Mass Market Customers)
+------------------------------------------------------------
+  Population  : 285,251 customers
+  age_ordinal                             : +0.25
+  cust_account_balance                    : -0.47
+  transaction_amount_inr                  : -0.48
+  customer_freq                           : +0.00
+
+  Description : The majority of the bank's customers fall into this cluster. Their age is standard or slightly above average, but their account balances tend to be very minimal and their transaction amounts are the lowest.
+  Actionable  : This mass segment likely uses their accounts only as a transit for funds (e.g., receiving salary and then immediately withdrawing it all). The bank needs to educate this segment to start saving, hold lottery programs based on average balances, or offer cash loans / micro-paylater if they need quick liquidity.
+
+============================================================
+Note: customer_freq is uniformly 0.0 across all clusters because almost all customers recorded only 1 transaction in the dataset, so frequency does not differentiate clusters.
+============================================================
