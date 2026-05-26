@@ -17,6 +17,34 @@ LOG_DIR             = ROOT_DIR / "logs"
 CLUSTERING_INPUT_PATH  = PROCESSED_DATA_PATH          # reads clean.csv from stage 1
 CLUSTERING_OUTPUT_DIR  = ROOT_DIR / "data" / "stage2_Clustering"
 
+# ── Stage 3: Association Rule Mining ─────────────────────────────────────────
+ASSOC_INPUT_PATH   = RAW_DATA_PATH                    # reads raw CSV for original values
+ASSOC_OUTPUT_DIR   = ROOT_DIR / "data" / "stage3_ARM"
+
+# Discretization bins — domain-justified for Indian banking context
+BALANCE_BINS   = [0, 5_000, 25_000, 100_000, 500_000, float('inf')]
+BALANCE_LABELS = ["Very Low (<5K)", "Low (5K-25K)", "Medium (25K-100K)",
+                  "High (100K-500K)", "Very High (>500K)"]
+
+TXN_AMOUNT_BINS   = [0, 100, 500, 2_000, 10_000, float('inf')]
+TXN_AMOUNT_LABELS = ["Micro (<100)", "Small (100-500)", "Medium (500-2K)",
+                     "Large (2K-10K)", "Very Large (>10K)"]
+
+FREQ_BINS   = [0, 1, 3, float('inf')]
+FREQ_LABELS = ["Single (1)", "Occasional (2-3)", "Frequent (4+)"]
+
+MONTH_SEASON_MAP = {
+    1: "Winter", 2: "Winter", 3: "Spring", 4: "Spring",
+    5: "Spring", 6: "Summer", 7: "Summer", 8: "Summer",
+    9: "Autumn", 10: "Autumn", 11: "Autumn", 12: "Winter",
+}
+
+# Apriori thresholds
+APRIORI_MIN_SUPPORT    = 0.05     # 5% — ~35K transactions minimum
+APRIORI_MIN_CONFIDENCE = 0.50     # 50%
+APRIORI_MIN_LIFT       = 1.05     # Must exceed baseline co-occurrence
+APRIORI_MAX_LEN        = 3        # Max items per itemset
+
 # ── KYC fields — never imputed, only dropped if inconsistent ─────────────────
 KYC_FIELDS = ["customer_dob", "cust_gender"]
 

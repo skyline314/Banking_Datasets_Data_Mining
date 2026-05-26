@@ -523,3 +523,1997 @@ Note: customer_freq is uniformly 0.0 across all clusters because almost all cust
 2026-05-12 19:33:54 | INFO     | __main__ | ╔══════════════════════════════════════════════════════════╗
 2026-05-12 19:33:54 | INFO     | __main__ | ║  ✅ ALL STAGES COMPLETE — Total Time: 121.8s              ║
 2026-05-12 19:33:54 | INFO     | __main__ | ╚══════════════════════════════════════════════════════════╝
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.pipeline |        BANK TRANSACTIONS -- ASSOCIATION RULE MINING        
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.pipeline | Input  : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.pipeline | Output : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.pipeline | -- STEP 1 / 3 : LOAD & DISCRETIZE ---------------------------
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.discretize | STEP 1 : LOAD & DISCRETIZE
+2026-05-13 23:15:49 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-13 23:15:49 | INFO     | src.stage1_ETL.extract | Loading raw data from: D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-13 23:15:51 | INFO     | src.stage1_ETL.extract | Loaded 1,048,567 rows × 9 columns
+2026-05-13 23:15:51 | INFO     | src.stage1_ETL.extract | Computing customer stats on raw data (before any drops)
+2026-05-13 23:15:54 | INFO     | src.stage1_ETL.extract |   Unique customers: 884,265
+2026-05-13 23:15:54 | INFO     | src.stage1_ETL.extract |   customer_freq — min: 1, max: 6, mean: 1.19
+2026-05-13 23:15:54 | INFO     | src.stage3_ARM.discretize | Applying Stage 1 cleaning steps (reused from ETL)...
+2026-05-13 23:15:55 | INFO     | src.stage1_ETL.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
+2026-05-13 23:15:55 | INFO     | src.stage1_ETL.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
+2026-05-13 23:15:56 | INFO     | src.stage1_ETL.transform | [Missing] Columns with nulls:
+customer_dob            3397
+cust_gender             1100
+cust_location            151
+cust_account_balance    2369
+2026-05-13 23:15:56 | INFO     | src.stage1_ETL.transform | [Missing] Dropped 6,953 rows with nulls — 1,041,614 remaining
+2026-05-13 23:16:28 | INFO     | src.stage1_ETL.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
+2026-05-13 23:16:29 | INFO     | src.stage1_ETL.transform | [Types] Invalid TransactionTime values: 0
+2026-05-13 23:19:45 | INFO     | src.stage1_ETL.transform | [Types] Conversion complete
+2026-05-13 23:19:49 | WARNING  | src.stage1_ETL.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
+2026-05-13 23:19:49 | WARNING  | src.stage1_ETL.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
+2026-05-13 23:19:49 | WARNING  | src.stage1_ETL.transform | [KYC] Mining conclusions reflect customers with verified identity only
+2026-05-13 23:19:49 | INFO     | src.stage1_ETL.transform | [KYC] Remaining: 739,899 rows
+2026-05-13 23:19:49 | INFO     | src.stage1_ETL.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
+2026-05-13 23:19:49 | INFO     | src.stage1_ETL.transform | [Gender] Distribution:
+cust_gender
+M    540772
+F    199126
+2026-05-13 23:19:49 | INFO     | src.stage1_ETL.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
+2026-05-13 23:19:49 | INFO     | src.stage1_ETL.transform | [Location] Top 5 after merge:
+cust_location
+DELHI        109558
+MUMBAI        72329
+BANGALORE     57729
+GURGAON       52606
+NOIDA         23200
+2026-05-13 23:19:49 | INFO     | src.stage1_ETL.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
+2026-05-13 23:19:50 | INFO     | src.stage1_ETL.transform | [Age] Stats — min:0, max:89, mean:30.7
+2026-05-13 23:19:50 | INFO     | src.stage1_ETL.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
+2026-05-13 23:19:51 | INFO     | src.stage1_ETL.transform | [Stats] Merged customer stats — shape: (699261, 18)
+2026-05-13 23:19:51 | INFO     | src.stage1_ETL.transform | [Stats] customer_freq — mean: 1.00, max: 3
+2026-05-13 23:19:51 | INFO     | src.stage3_ARM.discretize | After cleaning: 699,261 rows × 18 columns
+2026-05-13 23:19:51 | INFO     | src.stage3_ARM.discretize | Discretizing continuous variables into categorical bins...
+2026-05-13 23:19:51 | INFO     | src.stage3_ARM.discretize | [Discretize] Balance groups:
+balance_group
+High (100K-500K)      86472
+Low (5K-25K)         235887
+Medium (25K-100K)    167019
+Very High (>500K)     26078
+Very Low (<5K)       183805
+2026-05-13 23:19:51 | INFO     | src.stage3_ARM.discretize | [Discretize] Transaction amount groups:
+txn_amount_group
+Large (2K-10K)        84504
+Medium (500-2K)      210611
+Micro (<100)         137351
+Small (100-500)      252653
+Very Large (>10K)     14142
+2026-05-13 23:19:51 | INFO     | src.stage3_ARM.discretize | [Discretize] Age groups:
+age_group
+18-24    155992
+25-34    375709
+35-44    114736
+45-54     33627
+55-64     12409
+65+        5451
+<18        1337
+2026-05-13 23:19:51 | INFO     | src.stage3_ARM.discretize | [Discretize] Frequency groups:
+freq_group
+Occasional (2-3)      3281
+Single (1)          695980
+2026-05-13 23:19:51 | INFO     | src.stage3_ARM.discretize | [Discretize] Seasons:
+season
+Autumn    263962
+Summer    435299
+2026-05-13 23:19:51 | INFO     | src.stage3_ARM.discretize | [Discretize] Day type:
+day_type
+Weekday    483942
+Weekend    215319
+2026-05-13 23:19:52 | INFO     | src.stage3_ARM.discretize | [Discretize] Location groups (top 15 + OTHER):
+location
+OTHER          278825
+DELHI          101605
+MUMBAI          69208
+BANGALORE       55119
+GURGAON         50362
+NOIDA           22512
+CHENNAI         19571
+PUNE            17132
+HYDERABAD       15541
+THANE           14861
+KOLKATA         13419
+GHAZIABAD       10404
+NAVI MUMBAI      8558
+AHMEDABAD        8019
+FARIDABAD        7564
+JAIPUR           6561
+2026-05-13 23:19:52 | INFO     | src.stage3_ARM.discretize | [Discretize] Gender:
+gender
+M    505715
+F    193546
+2026-05-13 23:19:52 | INFO     | src.stage3_ARM.discretize | [Discretize] Time period:
+time_period
+Evening (16-20)             205472
+Night (20-00)               177359
+Midday/Afternoon (12-16)    170033
+Morning (08-12)             100042
+Late Night (00-04)           24688
+Early Morning (04-08)        21667
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.discretize | [Transactions] Built 699,261 transaction baskets with 9 item dimensions
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.discretize | [Transactions] Sample basket: ['balance_group=Low (5K-25K)', 'txn_amount_group=Micro (<100)', 'age_group=18-24', 'freq_group=Single (1)', 'season=Summer', 'day_type=Weekday', 'location=OTHER', 'gender=F', 'time_period=Midday/Afternoon (12-16)']
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.discretize | DISCRETIZATION COMPLETE — 699,261 transactions ready
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.pipeline | -- STEP 2 / 3 : APRIORI MINING & RULE GENERATION ------------
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.mine | STEP 2 : APRIORI MINING & RULE GENERATION
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-13 23:20:30 | INFO     | src.stage3_ARM.mine | Encoding transaction baskets into boolean matrix...
+2026-05-13 23:20:31 | INFO     | src.stage3_ARM.mine |   Transaction matrix shape: (699261, 47)
+2026-05-13 23:20:31 | INFO     | src.stage3_ARM.mine |   Total unique items: 47
+2026-05-13 23:20:31 | INFO     | src.stage3_ARM.mine | Running Apriori (min_support=0.02, max_len=4)...
+2026-05-13 23:21:53 | ERROR    | src.stage3_ARM.pipeline | ==========================================================
+2026-05-13 23:21:53 | ERROR    | src.stage3_ARM.pipeline |   PIPELINE FAILED
+2026-05-13 23:21:53 | ERROR    | src.stage3_ARM.pipeline | ==========================================================
+2026-05-13 23:21:54 | ERROR    | src.stage3_ARM.pipeline | Traceback (most recent call last):
+  File "D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\src\stage3_ARM\pipeline.py", line 48, in run
+    frequent_itemsets, rules = run_mining(transactions)
+                               ~~~~~~~~~~^^^^^^^^^^^^^^
+  File "D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\src\stage3_ARM\mine.py", line 171, in run_mining
+    frequent_itemsets = find_frequent_itemsets(df_encoded)
+  File "D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\src\stage3_ARM\mine.py", line 61, in find_frequent_itemsets
+    frequent_itemsets = apriori(
+        df_encoded,
+    ...<2 lines>...
+        max_len=APRIORI_MAX_LEN,
+    )
+  File "D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\venv\Lib\site-packages\mlxtend\frequent_patterns\apriori.py", line 309, in apriori
+    _bools = np.all(X[:, combin], axis=2)
+                    ~^^^^^^^^^^^
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 19.5 GiB for an array with shape (7497, 4, 699261) and data type bool
+
+2026-05-13 23:21:54 | ERROR    | src.stage3_ARM.pipeline | Failed after 364.7s
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.pipeline |        BANK TRANSACTIONS -- ASSOCIATION RULE MINING        
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.pipeline | Input  : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.pipeline | Output : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.pipeline | -- STEP 1 / 3 : LOAD & DISCRETIZE ---------------------------
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.discretize | STEP 1 : LOAD & DISCRETIZE
+2026-05-14 13:34:18 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-14 13:34:18 | INFO     | src.stage1_ETL.extract | Loading raw data from: D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-14 13:34:21 | INFO     | src.stage1_ETL.extract | Loaded 1,048,567 rows × 9 columns
+2026-05-14 13:34:21 | INFO     | src.stage1_ETL.extract | Computing customer stats on raw data (before any drops)
+2026-05-14 13:34:26 | INFO     | src.stage1_ETL.extract |   Unique customers: 884,265
+2026-05-14 13:34:26 | INFO     | src.stage1_ETL.extract |   customer_freq — min: 1, max: 6, mean: 1.19
+2026-05-14 13:34:26 | INFO     | src.stage3_ARM.discretize | Applying Stage 1 cleaning steps (reused from ETL)...
+2026-05-14 13:34:30 | INFO     | src.stage1_ETL.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
+2026-05-14 13:34:30 | INFO     | src.stage1_ETL.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
+2026-05-14 13:34:31 | INFO     | src.stage1_ETL.transform | [Missing] Columns with nulls:
+customer_dob            3397
+cust_gender             1100
+cust_location            151
+cust_account_balance    2369
+2026-05-14 13:34:32 | INFO     | src.stage1_ETL.transform | [Missing] Dropped 6,953 rows with nulls — 1,041,614 remaining
+2026-05-14 13:36:57 | INFO     | src.stage1_ETL.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
+2026-05-14 13:36:58 | INFO     | src.stage1_ETL.transform | [Types] Invalid TransactionTime values: 0
+2026-05-14 13:43:12 | INFO     | src.stage1_ETL.transform | [Types] Conversion complete
+2026-05-14 13:43:18 | WARNING  | src.stage1_ETL.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
+2026-05-14 13:43:18 | WARNING  | src.stage1_ETL.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
+2026-05-14 13:43:18 | WARNING  | src.stage1_ETL.transform | [KYC] Mining conclusions reflect customers with verified identity only
+2026-05-14 13:43:19 | INFO     | src.stage1_ETL.transform | [KYC] Remaining: 739,899 rows
+2026-05-14 13:43:19 | INFO     | src.stage1_ETL.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
+2026-05-14 13:43:19 | INFO     | src.stage1_ETL.transform | [Gender] Distribution:
+cust_gender
+M    540772
+F    199126
+2026-05-14 13:43:20 | INFO     | src.stage1_ETL.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
+2026-05-14 13:43:20 | INFO     | src.stage1_ETL.transform | [Location] Top 5 after merge:
+cust_location
+DELHI        109558
+MUMBAI        72329
+BANGALORE     57729
+GURGAON       52606
+NOIDA         23200
+2026-05-14 13:43:20 | INFO     | src.stage1_ETL.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
+2026-05-14 13:43:20 | INFO     | src.stage1_ETL.transform | [Age] Stats — min:0, max:89, mean:30.7
+2026-05-14 13:43:21 | INFO     | src.stage1_ETL.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
+2026-05-14 13:43:22 | INFO     | src.stage1_ETL.transform | [Stats] Merged customer stats — shape: (699261, 18)
+2026-05-14 13:43:22 | INFO     | src.stage1_ETL.transform | [Stats] customer_freq — mean: 1.00, max: 3
+2026-05-14 13:43:22 | INFO     | src.stage3_ARM.discretize | After cleaning: 699,261 rows × 18 columns
+2026-05-14 13:43:22 | INFO     | src.stage3_ARM.discretize | Discretizing continuous variables into categorical bins...
+2026-05-14 13:43:23 | INFO     | src.stage3_ARM.discretize | [Discretize] Balance groups:
+balance_group
+High (100K-500K)      86472
+Low (5K-25K)         235887
+Medium (25K-100K)    167019
+Very High (>500K)     26078
+Very Low (<5K)       183805
+2026-05-14 13:43:23 | INFO     | src.stage3_ARM.discretize | [Discretize] Transaction amount groups:
+txn_amount_group
+Large (2K-10K)        84504
+Medium (500-2K)      210611
+Micro (<100)         137351
+Small (100-500)      252653
+Very Large (>10K)     14142
+2026-05-14 13:43:23 | INFO     | src.stage3_ARM.discretize | [Discretize] Age groups:
+age_group
+18-24    155992
+25-34    375709
+35-44    114736
+45-54     33627
+55-64     12409
+65+        5451
+<18        1337
+2026-05-14 13:43:23 | INFO     | src.stage3_ARM.discretize | [Discretize] Frequency groups:
+freq_group
+Occasional (2-3)      3281
+Single (1)          695980
+2026-05-14 13:43:24 | INFO     | src.stage3_ARM.discretize | [Discretize] Seasons:
+season
+Autumn    263962
+Summer    435299
+2026-05-14 13:43:24 | INFO     | src.stage3_ARM.discretize | [Discretize] Day type:
+day_type
+Weekday    483942
+Weekend    215319
+2026-05-14 13:43:27 | INFO     | src.stage3_ARM.discretize | [Discretize] Location groups (top 15 + OTHER):
+location
+OTHER          278825
+DELHI          101605
+MUMBAI          69208
+BANGALORE       55119
+GURGAON         50362
+NOIDA           22512
+CHENNAI         19571
+PUNE            17132
+HYDERABAD       15541
+THANE           14861
+KOLKATA         13419
+GHAZIABAD       10404
+NAVI MUMBAI      8558
+AHMEDABAD        8019
+FARIDABAD        7564
+JAIPUR           6561
+2026-05-14 13:43:27 | INFO     | src.stage3_ARM.discretize | [Discretize] Gender:
+gender
+M    505715
+F    193546
+2026-05-14 13:43:27 | INFO     | src.stage3_ARM.discretize | [Discretize] Time period:
+time_period
+Evening (16-20)             205472
+Night (20-00)               177359
+Midday/Afternoon (12-16)    170033
+Morning (08-12)             100042
+Late Night (00-04)           24688
+Early Morning (04-08)        21667
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.discretize | [Transactions] Built 699,261 transaction baskets with 9 item dimensions
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.discretize | [Transactions] Sample basket: ['balance_group=Low (5K-25K)', 'txn_amount_group=Micro (<100)', 'age_group=18-24', 'freq_group=Single (1)', 'season=Summer', 'day_type=Weekday', 'location=OTHER', 'gender=F', 'time_period=Midday/Afternoon (12-16)']
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.discretize | DISCRETIZATION COMPLETE — 699,261 transactions ready
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.pipeline | -- STEP 2 / 3 : APRIORI MINING & RULE GENERATION ------------
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.mine | STEP 2 : APRIORI MINING & RULE GENERATION
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-14 13:46:31 | INFO     | src.stage3_ARM.mine | Encoding transaction baskets into boolean matrix...
+2026-05-14 13:46:35 | INFO     | src.stage3_ARM.mine |   Transaction matrix shape: (699261, 47)
+2026-05-14 13:46:35 | INFO     | src.stage3_ARM.mine |   Total unique items: 47
+2026-05-14 13:46:35 | INFO     | src.stage3_ARM.mine | Running Apriori (min_support=0.05, max_len=3)...
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |   Frequent itemsets found: 657
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |     1-itemsets: 27
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |     2-itemsets: 195
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |     3-itemsets: 435
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine | Generating association rules (min_confidence=0.5)...
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |   Raw rules generated: 834
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |   After lift filter (>= 1.2): 1 rules
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine | 
+  TOP 15 ASSOCIATION RULES (sorted by Lift):
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |   #      Lift   Conf   Supp  Rule
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |   --------------------------------------------------------------------------------
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine |   1      1.29  0.513 0.0776  gender=M, txn_amount_group=Micro (<100) → location=OTHER
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine | MINING COMPLETE — 1 filtered rules
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.pipeline | -- STEP 3 / 3 : INTERPRET & EXPORT --------------------------
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | STEP 3 : INTERPRET & EXPORT
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | Exported 1 full rules → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\association_rules_full.csv'
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | Exported 1 interpreted rules → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\top_rules_interpreted.csv'
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | Exported text report → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\association_rules_report.txt'
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | Exported decisions log → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\DECISIONS.md'
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | 
+================================================================================
+  ASSOCIATION RULE MINING — BUSINESS REPORT
+  Bank Transactions Data Mining Project — Stage 3
+================================================================================
+
+MINING SUMMARY
+--------------------------------------------------------------------------------
+  Frequent itemsets discovered : 657
+  Total rules generated        : 1
+  Rules after filtering         : 1
+  Top rules documented          : 1
+  Min support threshold         : 0.02 (2%)
+  Min confidence threshold      : 0.5 (50%)
+  Min lift threshold            : 1.2
+
+  Lift range   : 1.29 – 1.29
+  Conf range   : 0.513 – 0.513
+  Supp range   : 0.0776 – 0.0776
+
+================================================================================
+  RANKED RULES WITH BUSINESS INTERPRETATION
+================================================================================
+
+  Rule #1
+  ----------------------------------------------------------------------------
+  Pattern    : gender=M, txn_amount_group=Micro (<100)
+             → location=OTHER
+  Support    : 0.0776 (7.76%)
+  Confidence : 0.5128 (51.3%)
+  Lift       : 1.2860
+
+  Rule (English):
+    IF the customer is Male AND the transaction amount is Micro (<100), THEN the customer is located in OTHER
+
+  Explanation:
+        Gender-based spending patterns reflect socioeconomic differences —
+    in the Indian banking context, distinct transaction behaviors across
+    genders can inform product targeting. With a lift of 1.29, this
+    combination is 29% more likely to occur together than expected by random
+    chance, and the pattern holds with 51% confidence.
+
+  Recommendation:
+        Use this pattern to refine customer segmentation and create targeted
+    cross-selling campaigns based on the identified co-occurrence.
+
+================================================================================
+  END OF REPORT
+================================================================================
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | INTERPRETATION COMPLETE — 1 rules documented
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.pipeline |   PIPELINE COMPLETE -- 750.2s
+2026-05-14 13:46:48 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.pipeline |        BANK TRANSACTIONS -- ASSOCIATION RULE MINING        
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.pipeline | Input  : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.pipeline | Output : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.pipeline | -- STEP 1 / 3 : LOAD & DISCRETIZE ---------------------------
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.discretize | STEP 1 : LOAD & DISCRETIZE
+2026-05-17 11:39:22 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-17 11:39:22 | INFO     | src.stage1_ETL.extract | Loading raw data from: D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-17 11:39:24 | INFO     | src.stage1_ETL.extract | Loaded 1,048,567 rows × 9 columns
+2026-05-17 11:39:24 | INFO     | src.stage1_ETL.extract | Computing customer stats on raw data (before any drops)
+2026-05-17 11:39:29 | INFO     | src.stage1_ETL.extract |   Unique customers: 884,265
+2026-05-17 11:39:29 | INFO     | src.stage1_ETL.extract |   customer_freq — min: 1, max: 6, mean: 1.19
+2026-05-17 11:39:29 | INFO     | src.stage3_ARM.discretize | Applying Stage 1 cleaning steps (reused from ETL)...
+2026-05-17 11:39:33 | INFO     | src.stage1_ETL.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
+2026-05-17 11:39:33 | INFO     | src.stage1_ETL.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
+2026-05-17 11:39:33 | INFO     | src.stage1_ETL.transform | [Missing] Columns with nulls:
+customer_dob            3397
+cust_gender             1100
+cust_location            151
+cust_account_balance    2369
+2026-05-17 11:39:34 | INFO     | src.stage1_ETL.transform | [Missing] Dropped 6,953 rows with nulls — 1,041,614 remaining
+2026-05-17 11:41:42 | INFO     | src.stage1_ETL.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
+2026-05-17 11:41:44 | INFO     | src.stage1_ETL.transform | [Types] Invalid TransactionTime values: 0
+2026-05-17 11:48:12 | INFO     | src.stage1_ETL.transform | [Types] Conversion complete
+2026-05-17 11:48:18 | WARNING  | src.stage1_ETL.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
+2026-05-17 11:48:18 | WARNING  | src.stage1_ETL.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
+2026-05-17 11:48:18 | WARNING  | src.stage1_ETL.transform | [KYC] Mining conclusions reflect customers with verified identity only
+2026-05-17 11:48:19 | INFO     | src.stage1_ETL.transform | [KYC] Remaining: 739,899 rows
+2026-05-17 11:48:19 | INFO     | src.stage1_ETL.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
+2026-05-17 11:48:20 | INFO     | src.stage1_ETL.transform | [Gender] Distribution:
+cust_gender
+M    540772
+F    199126
+2026-05-17 11:48:20 | INFO     | src.stage1_ETL.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
+2026-05-17 11:48:20 | INFO     | src.stage1_ETL.transform | [Location] Top 5 after merge:
+cust_location
+DELHI        109558
+MUMBAI        72329
+BANGALORE     57729
+GURGAON       52606
+NOIDA         23200
+2026-05-17 11:48:20 | INFO     | src.stage1_ETL.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
+2026-05-17 11:48:21 | INFO     | src.stage1_ETL.transform | [Age] Stats — min:0, max:89, mean:30.7
+2026-05-17 11:48:22 | INFO     | src.stage1_ETL.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
+2026-05-17 11:48:23 | INFO     | src.stage1_ETL.transform | [Stats] Merged customer stats — shape: (699261, 18)
+2026-05-17 11:48:23 | INFO     | src.stage1_ETL.transform | [Stats] customer_freq — mean: 1.00, max: 3
+2026-05-17 11:48:23 | INFO     | src.stage3_ARM.discretize | After cleaning: 699,261 rows × 18 columns
+2026-05-17 11:48:23 | INFO     | src.stage3_ARM.discretize | Discretizing continuous variables into categorical bins...
+2026-05-17 11:48:23 | INFO     | src.stage3_ARM.discretize | [Discretize] Balance groups:
+balance_group
+High (100K-500K)      86472
+Low (5K-25K)         235887
+Medium (25K-100K)    167019
+Very High (>500K)     26078
+Very Low (<5K)       183805
+2026-05-17 11:48:24 | INFO     | src.stage3_ARM.discretize | [Discretize] Transaction amount groups:
+txn_amount_group
+Large (2K-10K)        84504
+Medium (500-2K)      210611
+Micro (<100)         137351
+Small (100-500)      252653
+Very Large (>10K)     14142
+2026-05-17 11:48:24 | INFO     | src.stage3_ARM.discretize | [Discretize] Age groups:
+age_group
+18-24    155992
+25-34    375709
+35-44    114736
+45-54     33627
+55-64     12409
+65+        5451
+<18        1337
+2026-05-17 11:48:24 | INFO     | src.stage3_ARM.discretize | [Discretize] Frequency groups:
+freq_group
+Occasional (2-3)      3281
+Single (1)          695980
+2026-05-17 11:48:25 | INFO     | src.stage3_ARM.discretize | [Discretize] Seasons:
+season
+Autumn    263962
+Summer    435299
+2026-05-17 11:48:25 | INFO     | src.stage3_ARM.discretize | [Discretize] Day type:
+day_type
+Weekday    483942
+Weekend    215319
+2026-05-17 11:48:28 | INFO     | src.stage3_ARM.discretize | [Discretize] Location groups (top 15 + OTHER):
+location
+OTHER          278825
+DELHI          101605
+MUMBAI          69208
+BANGALORE       55119
+GURGAON         50362
+NOIDA           22512
+CHENNAI         19571
+PUNE            17132
+HYDERABAD       15541
+THANE           14861
+KOLKATA         13419
+GHAZIABAD       10404
+NAVI MUMBAI      8558
+AHMEDABAD        8019
+FARIDABAD        7564
+JAIPUR           6561
+2026-05-17 11:48:28 | INFO     | src.stage3_ARM.discretize | [Discretize] Gender:
+gender
+M    505715
+F    193546
+2026-05-17 11:48:28 | INFO     | src.stage3_ARM.discretize | [Discretize] Time period:
+time_period
+Evening (16-20)             205472
+Night (20-00)               177359
+Midday/Afternoon (12-16)    170033
+Morning (08-12)             100042
+Late Night (00-04)           24688
+Early Morning (04-08)        21667
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.discretize | [Transactions] Built 699,261 transaction baskets with 9 item dimensions
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.discretize | [Transactions] Sample basket: ['balance_group=Low (5K-25K)', 'txn_amount_group=Micro (<100)', 'age_group=18-24', 'freq_group=Single (1)', 'season=Summer', 'day_type=Weekday', 'location=OTHER', 'gender=F', 'time_period=Midday/Afternoon (12-16)']
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.discretize | DISCRETIZATION COMPLETE — 699,261 transactions ready
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.pipeline | -- STEP 2 / 3 : APRIORI MINING & RULE GENERATION ------------
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.mine | STEP 2 : APRIORI MINING & RULE GENERATION
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-17 11:50:59 | INFO     | src.stage3_ARM.mine | Encoding transaction baskets into boolean matrix...
+2026-05-17 11:51:03 | INFO     | src.stage3_ARM.mine |   Transaction matrix shape: (699261, 47)
+2026-05-17 11:51:03 | INFO     | src.stage3_ARM.mine |   Total unique items: 47
+2026-05-17 11:51:03 | INFO     | src.stage3_ARM.mine | Running Apriori (min_support=0.05, max_len=3)...
+2026-05-17 11:51:13 | INFO     | src.stage3_ARM.mine |   Frequent itemsets found: 657
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |     1-itemsets: 27
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |     2-itemsets: 195
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |     3-itemsets: 435
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine | Generating association rules (min_confidence=0.5)...
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   Raw rules generated: 834
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   After lift filter (>= 1.05): 66 rules
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine | 
+  TOP 15 ASSOCIATION RULES (sorted by Lift):
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   #      Lift   Conf   Supp  Rule
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   --------------------------------------------------------------------------------
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   1      1.29  0.513 0.0776  gender=M, txn_amount_group=Micro (<100) → location=OTHER
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   2      1.14  0.570 0.1120  txn_amount_group=Micro (<100) → day_type=Weekday, gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   3      1.12  0.811 0.0647  balance_group=Very Low (<5K), txn_amount_group=Micro (<100) → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   4      1.11  0.557 0.1465  balance_group=Very Low (<5K) → day_type=Weekday, gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   5      1.11  0.801 0.0776  location=OTHER, txn_amount_group=Micro (<100) → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   6      1.10  0.797 0.0808  age_group=25-34, txn_amount_group=Micro (<100) → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   7      1.10  0.797 0.0968  balance_group=Very Low (<5K), location=OTHER → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   8      1.09  0.791 0.1087  age_group=25-34, balance_group=Very Low (<5K) → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   9      1.09  0.788 0.0519  balance_group=Very Low (<5K), time_period=Night (20-00) → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   10     1.09  0.545 0.0780  time_period=Morning (08-12) → day_type=Weekday, gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   11     1.09  0.785 0.0779  balance_group=Very Low (<5K), txn_amount_group=Small (100-500) → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   12     1.08  0.748 0.0922  season=Summer, txn_amount_group=Micro (<100) → day_type=Weekday
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   13     1.08  0.580 0.0775  balance_group=Low (5K-25K), txn_amount_group=Small (100-500) → age_group=25-34
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   14     1.08  0.779 0.0759  balance_group=Very Low (<5K), season=Autumn → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine |   15     1.08  0.779 0.1465  balance_group=Very Low (<5K), day_type=Weekday → gender=M
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine | MINING COMPLETE — 66 filtered rules
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.pipeline | -- STEP 3 / 3 : INTERPRET & EXPORT --------------------------
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | STEP 3 : INTERPRET & EXPORT
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | Exported 66 full rules → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\association_rules_full.csv'
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | Exported 10 interpreted rules → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\top_rules_interpreted.csv'
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | Exported text report → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\association_rules_report.txt'
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | Exported decisions log → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\DECISIONS.md'
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | 
+================================================================================
+  ASSOCIATION RULE MINING — BUSINESS REPORT
+  Bank Transactions Data Mining Project — Stage 3
+================================================================================
+
+MINING SUMMARY
+--------------------------------------------------------------------------------
+  Frequent itemsets discovered : 657
+  Total rules generated        : 66
+  Rules after filtering         : 66
+  Top rules documented          : 10
+  Min support threshold         : 0.05 (5%)
+  Min confidence threshold      : 0.5 (50%)
+  Min lift threshold            : 1.05
+
+  Lift range   : 1.05 – 1.29
+  Conf range   : 0.513 – 0.811
+  Supp range   : 0.0519 – 0.3036
+
+================================================================================
+  RANKED RULES WITH BUSINESS INTERPRETATION
+================================================================================
+
+  Rule #1
+  ----------------------------------------------------------------------------
+  Pattern    : gender=M, txn_amount_group=Micro (<100)
+             → location=OTHER
+  Support    : 0.0776 (7.76%)
+  Confidence : 0.5128 (51.3%)
+  Lift       : 1.2860
+
+  Rule (English):
+    IF the customer is Male AND the transaction amount is Micro (<100), THEN the customer is located in OTHER
+
+  Explanation:
+        Gender-based spending patterns reflect socioeconomic differences —
+    in the Indian banking context, distinct transaction behaviors across
+    genders can inform product targeting. With a lift of 1.29, this
+    combination is 29% more likely to occur together than expected by random
+    chance, and the pattern holds with 51% confidence.
+
+  Recommendation:
+        Use this pattern to refine customer segmentation and create targeted
+    cross-selling campaigns based on the identified co-occurrence.
+
+  Rule #2
+  ----------------------------------------------------------------------------
+  Pattern    : txn_amount_group=Micro (<100)
+             → day_type=Weekday, gender=M
+  Support    : 0.1120 (11.20%)
+  Confidence : 0.5700 (57.0%)
+  Lift       : 1.1356
+
+  Rule (English):
+    IF the transaction amount is Micro (<100), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        Weekday transactions are more likely to be routine/scheduled
+    payments — bills, subscriptions, and business-related spending.
+    Gender-based spending patterns reflect socioeconomic differences — in
+    the Indian banking context, distinct transaction behaviors across
+    genders can inform product targeting. With a lift of 1.14, this
+    combination is 14% more likely to occur together than expected by random
+    chance, and the pattern holds with 57% confidence.
+
+  Recommendation:
+        Use this pattern to refine customer segmentation and create targeted
+    cross-selling campaigns based on the identified co-occurrence.
+
+  Rule #3
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K), txn_amount_group=Micro (<100)
+             → gender=M
+  Support    : 0.0647 (6.47%)
+  Confidence : 0.8109 (81.1%)
+  Lift       : 1.1213
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K) AND the transaction amount is Micro (<100), THEN the customer is Male
+
+  Explanation:
+        Gender-based spending patterns reflect socioeconomic differences —
+    in the Indian banking context, distinct transaction behaviors across
+    genders can inform product targeting. Low-balance customers often use
+    their account primarily as a transit for funds (salary credit →
+    immediate withdrawal), which is a common pattern in Indian retail
+    banking. With a lift of 1.12, this combination is 12% more likely to
+    occur together than expected by random chance, and the pattern holds
+    with 81% confidence.
+
+  Recommendation:
+        Offer micro-savings products, automatic round-up savings, or
+    balance-linked lucky draw programs to encourage balance retention.
+
+  Rule #4
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K)
+             → day_type=Weekday, gender=M
+  Support    : 0.1465 (14.65%)
+  Confidence : 0.5573 (55.7%)
+  Lift       : 1.1103
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        Weekday transactions are more likely to be routine/scheduled
+    payments — bills, subscriptions, and business-related spending.
+    Gender-based spending patterns reflect socioeconomic differences — in
+    the Indian banking context, distinct transaction behaviors across
+    genders can inform product targeting. Low-balance customers often use
+    their account primarily as a transit for funds (salary credit →
+    immediate withdrawal), which is a common pattern in Indian retail
+    banking. With a lift of 1.11, this combination is 11% more likely to
+    occur together than expected by random chance, and the pattern holds
+    with 56% confidence.
+
+  Recommendation:
+        Offer micro-savings products, automatic round-up savings, or
+    balance-linked lucky draw programs to encourage balance retention.
+
+  Rule #5
+  ----------------------------------------------------------------------------
+  Pattern    : location=OTHER, txn_amount_group=Micro (<100)
+             → gender=M
+  Support    : 0.0776 (7.76%)
+  Confidence : 0.8010 (80.1%)
+  Lift       : 1.1076
+
+  Rule (English):
+    IF the customer is located in OTHER AND the transaction amount is Micro (<100), THEN the customer is Male
+
+  Explanation:
+        Gender-based spending patterns reflect socioeconomic differences —
+    in the Indian banking context, distinct transaction behaviors across
+    genders can inform product targeting. With a lift of 1.11, this
+    combination is 11% more likely to occur together than expected by random
+    chance, and the pattern holds with 80% confidence.
+
+  Recommendation:
+        Use this pattern to refine customer segmentation and create targeted
+    cross-selling campaigns based on the identified co-occurrence.
+
+  Rule #6
+  ----------------------------------------------------------------------------
+  Pattern    : age_group=25-34, txn_amount_group=Micro (<100)
+             → gender=M
+  Support    : 0.0808 (8.08%)
+  Confidence : 0.7969 (79.7%)
+  Lift       : 1.1018
+
+  Rule (English):
+    IF the customer is in the 25-34 age group AND the transaction amount is Micro (<100), THEN the customer is Male
+
+  Explanation:
+        The 25-34 age group represents early-career professionals with
+    growing income, transitioning from basic to medium-tier banking
+    products. Gender-based spending patterns reflect socioeconomic
+    differences — in the Indian banking context, distinct transaction
+    behaviors across genders can inform product targeting. With a lift of
+    1.10, this combination is 10% more likely to occur together than
+    expected by random chance, and the pattern holds with 80% confidence.
+
+  Recommendation:
+        Target early-career professionals with home loan pre-approvals, SIP
+    investments, and credit-building products.
+
+  Rule #7
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K), location=OTHER
+             → gender=M
+  Support    : 0.0968 (9.68%)
+  Confidence : 0.7966 (79.7%)
+  Lift       : 1.1014
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K) AND the customer is located in OTHER, THEN the customer is Male
+
+  Explanation:
+        Gender-based spending patterns reflect socioeconomic differences —
+    in the Indian banking context, distinct transaction behaviors across
+    genders can inform product targeting. Low-balance customers often use
+    their account primarily as a transit for funds (salary credit →
+    immediate withdrawal), which is a common pattern in Indian retail
+    banking. With a lift of 1.10, this combination is 10% more likely to
+    occur together than expected by random chance, and the pattern holds
+    with 80% confidence.
+
+  Recommendation:
+        Offer micro-savings products, automatic round-up savings, or
+    balance-linked lucky draw programs to encourage balance retention.
+
+  Rule #8
+  ----------------------------------------------------------------------------
+  Pattern    : age_group=25-34, balance_group=Very Low (<5K)
+             → gender=M
+  Support    : 0.1087 (10.87%)
+  Confidence : 0.7913 (79.1%)
+  Lift       : 1.0942
+
+  Rule (English):
+    IF the customer is in the 25-34 age group AND the customer's account balance is Very Low (<5K), THEN the customer is Male
+
+  Explanation:
+        The 25-34 age group represents early-career professionals with
+    growing income, transitioning from basic to medium-tier banking
+    products. Gender-based spending patterns reflect socioeconomic
+    differences — in the Indian banking context, distinct transaction
+    behaviors across genders can inform product targeting. Low-balance
+    customers often use their account primarily as a transit for funds
+    (salary credit → immediate withdrawal), which is a common pattern in
+    Indian retail banking. With a lift of 1.09, this combination is 9% more
+    likely to occur together than expected by random chance, and the pattern
+    holds with 79% confidence.
+
+  Recommendation:
+        Offer micro-savings products, automatic round-up savings, or
+    balance-linked lucky draw programs to encourage balance retention.
+    Target early-career professionals with home loan pre-approvals, SIP
+    investments, and credit-building products.
+
+  Rule #9
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K), time_period=Night (20-00)
+             → gender=M
+  Support    : 0.0519 (5.19%)
+  Confidence : 0.7884 (78.8%)
+  Lift       : 1.0901
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K) AND the transaction happens during Night (20-00), THEN the customer is Male
+
+  Explanation:
+        Evening and night-time transactions often correlate with e-commerce
+    and online shopping behavior, as customers browse after work hours.
+    Gender-based spending patterns reflect socioeconomic differences — in
+    the Indian banking context, distinct transaction behaviors across
+    genders can inform product targeting. Low-balance customers often use
+    their account primarily as a transit for funds (salary credit →
+    immediate withdrawal), which is a common pattern in Indian retail
+    banking. With a lift of 1.09, this combination is 9% more likely to
+    occur together than expected by random chance, and the pattern holds
+    with 79% confidence.
+
+  Recommendation:
+        Partner with e-commerce platforms for evening flash-sale co-branded
+    offers and card-linked discounts. Offer micro-savings products,
+    automatic round-up savings, or balance-linked lucky draw programs to
+    encourage balance retention.
+
+  Rule #10
+  ----------------------------------------------------------------------------
+  Pattern    : time_period=Morning (08-12)
+             → day_type=Weekday, gender=M
+  Support    : 0.0780 (7.80%)
+  Confidence : 0.5451 (54.5%)
+  Lift       : 1.0860
+
+  Rule (English):
+    IF the transaction happens during Morning (08-12), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        Weekday transactions are more likely to be routine/scheduled
+    payments — bills, subscriptions, and business-related spending. Morning
+    transactions typically represent routine financial activities — ATM
+    withdrawals, scheduled payments, and pre-work purchases. Gender-based
+    spending patterns reflect socioeconomic differences — in the Indian
+    banking context, distinct transaction behaviors across genders can
+    inform product targeting. With a lift of 1.09, this combination is 9%
+    more likely to occur together than expected by random chance, and the
+    pattern holds with 55% confidence.
+
+  Recommendation:
+        Use this pattern to refine customer segmentation and create targeted
+    cross-selling campaigns based on the identified co-occurrence.
+
+================================================================================
+  END OF REPORT
+================================================================================
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | INTERPRETATION COMPLETE — 10 rules documented
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.pipeline |   PIPELINE COMPLETE -- 711.3s
+2026-05-17 11:51:14 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.pipeline |        BANK TRANSACTIONS -- ASSOCIATION RULE MINING        
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.pipeline | Input  : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.pipeline | Output : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.pipeline | -- STEP 1 / 3 : LOAD & DISCRETIZE ---------------------------
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.discretize | STEP 1 : LOAD & DISCRETIZE
+2026-05-26 10:30:45 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-26 10:30:45 | INFO     | src.stage1_ETL.extract | Loading raw data from: D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-26 10:30:48 | INFO     | src.stage1_ETL.extract | Loaded 1,048,567 rows × 9 columns
+2026-05-26 10:30:48 | INFO     | src.stage1_ETL.extract | Computing customer stats on raw data (before any drops)
+2026-05-26 10:30:52 | INFO     | src.stage1_ETL.extract |   Unique customers: 884,265
+2026-05-26 10:30:52 | INFO     | src.stage1_ETL.extract |   customer_freq — min: 1, max: 6, mean: 1.19
+2026-05-26 10:30:52 | INFO     | src.stage3_ARM.discretize | Applying Stage 1 cleaning steps (reused from ETL)...
+2026-05-26 10:30:55 | INFO     | src.stage1_ETL.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
+2026-05-26 10:30:55 | INFO     | src.stage1_ETL.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
+2026-05-26 10:30:55 | INFO     | src.stage1_ETL.transform | [Missing] Columns with nulls:
+customer_dob            3397
+cust_gender             1100
+cust_location            151
+cust_account_balance    2369
+2026-05-26 10:30:56 | INFO     | src.stage1_ETL.transform | [Missing] Dropped 6,953 rows with nulls — 1,041,614 remaining
+2026-05-26 10:31:27 | INFO     | src.stage1_ETL.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
+2026-05-26 10:31:27 | INFO     | src.stage1_ETL.transform | [Types] Invalid TransactionTime values: 0
+2026-05-26 10:35:17 | INFO     | src.stage1_ETL.transform | [Types] Conversion complete
+2026-05-26 10:35:19 | WARNING  | src.stage1_ETL.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
+2026-05-26 10:35:19 | WARNING  | src.stage1_ETL.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
+2026-05-26 10:35:19 | WARNING  | src.stage1_ETL.transform | [KYC] Mining conclusions reflect customers with verified identity only
+2026-05-26 10:35:20 | INFO     | src.stage1_ETL.transform | [KYC] Remaining: 739,899 rows
+2026-05-26 10:35:20 | INFO     | src.stage1_ETL.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
+2026-05-26 10:35:20 | INFO     | src.stage1_ETL.transform | [Gender] Distribution:
+cust_gender
+M    540772
+F    199126
+2026-05-26 10:35:20 | INFO     | src.stage1_ETL.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
+2026-05-26 10:35:20 | INFO     | src.stage1_ETL.transform | [Location] Top 5 after merge:
+cust_location
+DELHI        109558
+MUMBAI        72329
+BANGALORE     57729
+GURGAON       52606
+NOIDA         23200
+2026-05-26 10:35:20 | INFO     | src.stage1_ETL.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
+2026-05-26 10:35:20 | INFO     | src.stage1_ETL.transform | [Age] Stats — min:0, max:89, mean:30.7
+2026-05-26 10:35:20 | INFO     | src.stage1_ETL.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
+2026-05-26 10:35:21 | INFO     | src.stage1_ETL.transform | [Stats] Merged customer stats — shape: (699261, 18)
+2026-05-26 10:35:21 | INFO     | src.stage1_ETL.transform | [Stats] customer_freq — mean: 1.00, max: 3
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | After cleaning: 699,261 rows × 18 columns
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | Discretizing continuous variables into categorical bins...
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Balance groups:
+balance_group
+High (100K-500K)      86472
+Low (5K-25K)         235887
+Medium (25K-100K)    167019
+Very High (>500K)     26078
+Very Low (<5K)       183805
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Transaction amount groups:
+txn_amount_group
+Large (2K-10K)        84504
+Medium (500-2K)      210611
+Micro (<100)         137351
+Small (100-500)      252653
+Very Large (>10K)     14142
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Age groups:
+age_group
+18-24    155992
+25-34    375709
+35-44    114736
+45-54     33627
+55-64     12409
+65+        5451
+<18        1337
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Frequency groups:
+freq_group
+Occasional (2-3)      3281
+Single (1)          695980
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Seasons:
+season
+Autumn    263962
+Summer    435299
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Day type:
+day_type
+Weekday    483942
+Weekend    215319
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Location groups (top 15 + OTHER):
+location
+OTHER          278825
+DELHI          101605
+MUMBAI          69208
+BANGALORE       55119
+GURGAON         50362
+NOIDA           22512
+CHENNAI         19571
+PUNE            17132
+HYDERABAD       15541
+THANE           14861
+KOLKATA         13419
+GHAZIABAD       10404
+NAVI MUMBAI      8558
+AHMEDABAD        8019
+FARIDABAD        7564
+JAIPUR           6561
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Gender:
+gender
+M    505715
+F    193546
+2026-05-26 10:35:21 | INFO     | src.stage3_ARM.discretize | [Discretize] Time period:
+time_period
+Evening (16-20)             205472
+Night (20-00)               177359
+Midday/Afternoon (12-16)    170033
+Morning (08-12)             100042
+Late Night (00-04)           24688
+Early Morning (04-08)        21667
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.discretize | [Transactions] Built 699,261 transaction baskets with 9 item dimensions
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.discretize | [Transactions] Sample basket: ['balance_group=Low (5K-25K)', 'txn_amount_group=Micro (<100)', 'age_group=18-24', 'freq_group=Single (1)', 'season=Summer', 'day_type=Weekday', 'location=OTHER', 'gender=F', 'time_period=Midday/Afternoon (12-16)']
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.discretize | DISCRETIZATION COMPLETE — 699,261 transactions ready
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.pipeline | -- STEP 2 / 3 : APRIORI MINING & RULE GENERATION ------------
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.mine | STEP 2 : APRIORI MINING & RULE GENERATION
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-26 10:35:46 | INFO     | src.stage3_ARM.mine | Encoding transaction baskets into boolean matrix...
+2026-05-26 10:35:47 | INFO     | src.stage3_ARM.mine |   Transaction matrix shape: (699261, 47)
+2026-05-26 10:35:47 | INFO     | src.stage3_ARM.mine |   Total unique items: 47
+2026-05-26 10:35:47 | INFO     | src.stage3_ARM.mine | Running Apriori (min_support=0.05, max_len=3)...
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   Frequent itemsets found: 657
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |     1-itemsets: 27
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |     2-itemsets: 195
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |     3-itemsets: 435
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine | Generating association rules (min_confidence=0.5)...
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   Raw rules (conf ≥ 0.5): 834
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   After lift filter (≥ 1.05): 66 rules
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   Filtering removed 768 trivial rules
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine | 
+  TOP 15 ASSOCIATION RULES (sorted by Lift):
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   #      Lift   Conf   Supp  Rule
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   --------------------------------------------------------------------------------
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   1      1.29  0.513 0.0776  gender=M, txn_amount_group=Micro (<100) → location=OTHER
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   2      1.14  0.570 0.1120  txn_amount_group=Micro (<100) → day_type=Weekday, gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   3      1.12  0.811 0.0647  balance_group=Very Low (<5K), txn_amount_group=Micro (<100) → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   4      1.11  0.557 0.1465  balance_group=Very Low (<5K) → day_type=Weekday, gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   5      1.11  0.801 0.0776  location=OTHER, txn_amount_group=Micro (<100) → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   6      1.10  0.797 0.0808  age_group=25-34, txn_amount_group=Micro (<100) → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   7      1.10  0.797 0.0968  balance_group=Very Low (<5K), location=OTHER → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   8      1.09  0.791 0.1087  age_group=25-34, balance_group=Very Low (<5K) → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   9      1.09  0.788 0.0519  balance_group=Very Low (<5K), time_period=Night (20-00) → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   10     1.09  0.545 0.0780  time_period=Morning (08-12) → day_type=Weekday, gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   11     1.09  0.785 0.0779  balance_group=Very Low (<5K), txn_amount_group=Small (100-500) → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   12     1.08  0.748 0.0922  season=Summer, txn_amount_group=Micro (<100) → day_type=Weekday
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   13     1.08  0.580 0.0775  balance_group=Low (5K-25K), txn_amount_group=Small (100-500) → age_group=25-34
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   14     1.08  0.779 0.0759  balance_group=Very Low (<5K), season=Autumn → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine |   15     1.08  0.779 0.1465  balance_group=Very Low (<5K), day_type=Weekday → gender=M
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine | MINING COMPLETE — 66 filtered rules (from 834 candidates)
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.pipeline | -- STEP 3 / 3 : INTERPRET & EXPORT --------------------------
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | STEP 3 : INTERPRET & EXPORT
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | Exported 66 full rules → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\association_rules_full.csv'
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | Selected 12 diverse top rules covering 5 unique consequent patterns
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | Exported 12 interpreted rules → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\top_rules_interpreted.csv'
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | Exported text report → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\association_rules_report.txt'
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | Exported decisions log → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\DECISIONS.md'
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | 
+================================================================================
+  ASSOCIATION RULE MINING — BUSINESS REPORT
+  Bank Transactions Data Mining Project — Stage 3
+================================================================================
+
+MINING SUMMARY
+--------------------------------------------------------------------------------
+  Frequent itemsets discovered : 657
+  Rules generated (conf ≥ 0.5)  : 834
+  Rules after lift filter (≥ 1.05)  : 66
+  Filtering removed            : 768 trivial/independent rules
+  Top rules documented          : 12
+  Min support threshold         : 0.05 (5%)
+  Min confidence threshold      : 0.5 (50%)
+  Min lift threshold            : 1.05
+
+  Lift range   : 1.05 – 1.29
+  Conf range   : 0.513 – 0.811
+  Supp range   : 0.0519 – 0.3036
+
+THRESHOLD JUSTIFICATION
+--------------------------------------------------------------------------------
+  • Support ≥ 5%     : Each itemset must appear in at least ~35K of ~700K
+                       transactions — statistically significant, not noise.
+  • Confidence ≥ 50% : A rule must hold at least half the time to be
+                       presented as a finding (below 50% = wrong more often
+                       than right).
+  • Lift ≥ 1.05      : The co-occurrence must be at least 5% stronger than
+                       random baseline. Lift = 1.0 means statistically
+                       independent (no real association). This threshold
+                       removed 768 rules that passed confidence
+                       but showed no meaningful association.
+
+================================================================================
+  RANKED RULES WITH BUSINESS INTERPRETATION
+================================================================================
+
+  Rule #1
+  ----------------------------------------------------------------------------
+  Pattern    : gender=M, txn_amount_group=Micro (<100)
+             → location=OTHER
+  Support    : 0.0776 (7.76%)
+  Confidence : 0.5128 (51.3%)
+  Lift       : 1.2860
+
+  Rule (English):
+    IF the customer is Male AND the transaction amount is Micro (<100), THEN the customer is located in OTHER
+
+  Explanation:
+        Male customers dominate micro-transactions (<₹100) because men in
+    India are more likely to use UPI for small daily purchases — street
+    food, tea shops, parking, and auto-rickshaw fares — while female
+    customers tend to make fewer but larger planned purchases. Tier-2 and
+    Tier-3 city customers (grouped as 'OTHER') skew heavily male because
+    banking penetration in smaller Indian cities still disproportionately
+    favors men — women in these regions are less likely to have independent
+    bank accounts due to socioeconomic and cultural factors. Quantitatively,
+    this combination is 29% more likely to occur together than expected by
+    random chance (lift=1.29), and the pattern holds in 51% of cases where
+    the antecedent appears (confidence=0.51). The rule covers 7.8% of all
+    transactions (support=0.0776).
+
+  Recommendation:
+        Invest in Tier-2/3 city digital banking infrastructure — UPI-based
+    merchant onboarding, regional language app interfaces, and local
+    business banking products to capture the under-served market.
+
+  Rule #2
+  ----------------------------------------------------------------------------
+  Pattern    : txn_amount_group=Micro (<100)
+             → day_type=Weekday, gender=M
+  Support    : 0.1120 (11.20%)
+  Confidence : 0.5700 (57.0%)
+  Lift       : 1.1356
+
+  Rule (English):
+    IF the transaction amount is Micro (<100), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        Male customers dominate micro-transactions (<₹100) because men in
+    India are more likely to use UPI for small daily purchases — street
+    food, tea shops, parking, and auto-rickshaw fares — while female
+    customers tend to make fewer but larger planned purchases. Weekday
+    transactions reflect the working economy — salary credits, business
+    payments, scheduled EMIs, and routine purchases during office hours
+    dominate weekday volumes. Quantitatively, this combination is 14% more
+    likely to occur together than expected by random chance (lift=1.14), and
+    the pattern holds in 57% of cases where the antecedent appears
+    (confidence=0.57). The rule covers 11.2% of all transactions
+    (support=0.1120).
+
+  Recommendation:
+        Optimize bill payment and recurring transfer UX for weekday users —
+    introduce one-tap bill pay, smart payment reminders, and auto-schedule
+    features that align with the routine financial behavior of this segment.
+
+  Rule #3
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K), txn_amount_group=Micro (<100)
+             → gender=M
+  Support    : 0.0647 (6.47%)
+  Confidence : 0.8109 (81.1%)
+  Lift       : 1.1213
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K) AND the transaction amount is Micro (<100), THEN the customer is Male
+
+  Explanation:
+        Customers with very low account balances (<₹5K) making micro
+    transactions (<₹100) represent the underbanked segment — these accounts
+    are likely used only for basic UPI payments (chai, auto-rickshaw, mobile
+    recharges) with no savings behavior. Quantitatively, this combination is
+    12% more likely to occur together than expected by random chance
+    (lift=1.12), and the pattern holds in 81% of cases where the antecedent
+    appears (confidence=0.81). The rule covers 6.5% of all transactions
+    (support=0.0647).
+
+  Recommendation:
+        Launch a 'Smart Savings' feature that automatically rounds up each
+    micro-transaction to the nearest ₹10 and deposits the difference into a
+    savings jar — this converts frequent micro-spenders into savers with
+    zero behavioral friction.
+
+  Rule #4
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K)
+             → day_type=Weekday, gender=M
+  Support    : 0.1465 (14.65%)
+  Confidence : 0.5573 (55.7%)
+  Lift       : 1.1103
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        The strong association between very low balances and male customers
+    reflects India's gender banking gap — men are more likely to have
+    'salary accounts' opened by employers with minimal savings behavior,
+    while women who do bank tend to maintain higher balances due to
+    conservative saving habits and gold-linked deposits. Weekday
+    transactions reflect the working economy — salary credits, business
+    payments, scheduled EMIs, and routine purchases during office hours
+    dominate weekday volumes. Quantitatively, this combination is 11% more
+    likely to occur together than expected by random chance (lift=1.11), and
+    the pattern holds in 56% of cases where the antecedent appears
+    (confidence=0.56). The rule covers 14.6% of all transactions
+    (support=0.1465).
+
+  Recommendation:
+        Introduce weekday 'Salary Day' savings nudges — on common salary
+    credit days (1st, 7th, 15th), auto-prompt the customer to lock a portion
+    into a 7-day flexi-deposit before it's spent, converting transit
+    accounts into savings vehicles.
+
+  Rule #5
+  ----------------------------------------------------------------------------
+  Pattern    : location=OTHER, txn_amount_group=Micro (<100)
+             → gender=M
+  Support    : 0.0776 (7.76%)
+  Confidence : 0.8010 (80.1%)
+  Lift       : 1.1076
+
+  Rule (English):
+    IF the customer is located in OTHER AND the transaction amount is Micro (<100), THEN the customer is Male
+
+  Explanation:
+        Male customers dominate micro-transactions (<₹100) because men in
+    India are more likely to use UPI for small daily purchases — street
+    food, tea shops, parking, and auto-rickshaw fares — while female
+    customers tend to make fewer but larger planned purchases. Tier-2 and
+    Tier-3 city customers (grouped as 'OTHER') skew heavily male because
+    banking penetration in smaller Indian cities still disproportionately
+    favors men — women in these regions are less likely to have independent
+    bank accounts due to socioeconomic and cultural factors. Quantitatively,
+    this combination is 11% more likely to occur together than expected by
+    random chance (lift=1.11), and the pattern holds in 80% of cases where
+    the antecedent appears (confidence=0.80). The rule covers 7.8% of all
+    transactions (support=0.0776).
+
+  Recommendation:
+        Invest in Tier-2/3 city digital banking infrastructure — UPI-based
+    merchant onboarding, regional language app interfaces, and local
+    business banking products to capture the under-served market.
+
+  Rule #6
+  ----------------------------------------------------------------------------
+  Pattern    : time_period=Morning (08-12)
+             → day_type=Weekday, gender=M
+  Support    : 0.0780 (7.80%)
+  Confidence : 0.5451 (54.5%)
+  Lift       : 1.0860
+
+  Rule (English):
+    IF the transaction happens during Morning (08-12), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        Morning weekday transactions represent the routine financial rhythm
+    of working professionals — salary-day ATM withdrawals, commute-related
+    UPI payments, and scheduled auto-debits for bills and EMIs that execute
+    during business hours. Quantitatively, this combination is 9% more
+    likely to occur together than expected by random chance (lift=1.09), and
+    the pattern holds in 55% of cases where the antecedent appears
+    (confidence=0.55). The rule covers 7.8% of all transactions
+    (support=0.0780).
+
+  Recommendation:
+        Schedule promotional SMS/app notifications for 7-8 AM
+    (pre-transaction window) with personalized offers — 'Good morning! Pay
+    your electricity bill via our app today and earn ₹50 cashback.' Timing
+    aligns with when this segment is most financially active.
+
+  Rule #7
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Low (5K-25K), txn_amount_group=Small (100-500)
+             → age_group=25-34
+  Support    : 0.0775 (7.75%)
+  Confidence : 0.5802 (58.0%)
+  Lift       : 1.0798
+
+  Rule (English):
+    IF the customer's account balance is Low (5K-25K) AND the transaction amount is Small (100-500), THEN the customer is in the 25-34 age group
+
+  Explanation:
+        This rule reveals a statistically significant co-occurrence between
+    these attributes that cannot be explained by independent occurrence
+    alone, suggesting an underlying behavioral or demographic relationship
+    worth investigating. Quantitatively, this combination is 8% more likely
+    to occur together than expected by random chance (lift=1.08), and the
+    pattern holds in 58% of cases where the antecedent appears
+    (confidence=0.58). The rule covers 7.7% of all transactions
+    (support=0.0775).
+
+  Recommendation:
+        Target 25-34 year-olds with pre-approved personal loans, credit card
+    upgrades, and SIP investment products — this segment is at the
+    income-growth inflection point and most receptive to financial products.
+
+  Rule #8
+  ----------------------------------------------------------------------------
+  Pattern    : time_period=Night (20-00), txn_amount_group=Small (100-500)
+             → age_group=25-34
+  Support    : 0.0552 (5.52%)
+  Confidence : 0.5777 (57.8%)
+  Lift       : 1.0752
+
+  Rule (English):
+    IF the transaction happens during Night (20-00) AND the transaction amount is Small (100-500), THEN the customer is in the 25-34 age group
+
+  Explanation:
+        Night-time transactions (8PM-midnight) are predominantly digital —
+    e-commerce purchases, food delivery orders, and subscription renewals
+    that happen when customers browse their phones after work hours.
+    Quantitatively, this combination is 8% more likely to occur together
+    than expected by random chance (lift=1.08), and the pattern holds in 58%
+    of cases where the antecedent appears (confidence=0.58). The rule covers
+    5.5% of all transactions (support=0.0552).
+
+  Recommendation:
+        Target 25-34 year-olds with pre-approved personal loans, credit card
+    upgrades, and SIP investment products — this segment is at the
+    income-growth inflection point and most receptive to financial products.
+
+  Rule #9
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K)
+             → freq_group=Single (1), gender=M
+  Support    : 0.2032 (20.32%)
+  Confidence : 0.7731 (77.3%)
+  Lift       : 1.0742
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K), THEN the customer's transaction frequency is Single (1) AND the customer is Male
+
+  Explanation:
+        The strong association between very low balances and male customers
+    reflects India's gender banking gap — men are more likely to have
+    'salary accounts' opened by employers with minimal savings behavior,
+    while women who do bank tend to maintain higher balances due to
+    conservative saving habits and gold-linked deposits. Quantitatively,
+    this combination is 7% more likely to occur together than expected by
+    random chance (lift=1.07), and the pattern holds in 77% of cases where
+    the antecedent appears (confidence=0.77). The rule covers 20.3% of all
+    transactions (support=0.2032).
+
+  Recommendation:
+        Offer micro-savings products with gamification — implement 'balance
+    milestones' (₹5K, ₹10K, ₹25K) with small rewards (cashback, lucky draws)
+    to gradually shift low-balance customers into the savings habit.
+
+  Rule #10
+  ----------------------------------------------------------------------------
+  Pattern    : gender=M, txn_amount_group=Small (100-500)
+             → age_group=25-34
+  Support    : 0.1543 (15.43%)
+  Confidence : 0.5757 (57.6%)
+  Lift       : 1.0715
+
+  Rule (English):
+    IF the customer is Male AND the transaction amount is Small (100-500), THEN the customer is in the 25-34 age group
+
+  Explanation:
+        This rule reveals a statistically significant co-occurrence between
+    these attributes that cannot be explained by independent occurrence
+    alone, suggesting an underlying behavioral or demographic relationship
+    worth investigating. Quantitatively, this combination is 7% more likely
+    to occur together than expected by random chance (lift=1.07), and the
+    pattern holds in 58% of cases where the antecedent appears
+    (confidence=0.58). The rule covers 15.4% of all transactions
+    (support=0.1543).
+
+  Recommendation:
+        Target 25-34 year-olds with pre-approved personal loans, credit card
+    upgrades, and SIP investment products — this segment is at the
+    income-growth inflection point and most receptive to financial products.
+
+  Rule #11
+  ----------------------------------------------------------------------------
+  Pattern    : txn_amount_group=Micro (<100)
+             → freq_group=Single (1), gender=M
+  Support    : 0.1506 (15.06%)
+  Confidence : 0.7666 (76.7%)
+  Lift       : 1.0651
+
+  Rule (English):
+    IF the transaction amount is Micro (<100), THEN the customer's transaction frequency is Single (1) AND the customer is Male
+
+  Explanation:
+        Male customers dominate micro-transactions (<₹100) because men in
+    India are more likely to use UPI for small daily purchases — street
+    food, tea shops, parking, and auto-rickshaw fares — while female
+    customers tend to make fewer but larger planned purchases.
+    Quantitatively, this combination is 7% more likely to occur together
+    than expected by random chance (lift=1.07), and the pattern holds in 77%
+    of cases where the antecedent appears (confidence=0.77). The rule covers
+    15.1% of all transactions (support=0.1506).
+
+  Recommendation:
+        Design re-engagement campaigns for single-transaction customers —
+    trigger an automated welcome series (Day 3, 7, 14, 30) with personalized
+    incentives to drive a second transaction.
+
+  Rule #12
+  ----------------------------------------------------------------------------
+  Pattern    : age_group=35-44
+             → freq_group=Single (1), gender=M
+  Support    : 0.1247 (12.47%)
+  Confidence : 0.7600 (76.0%)
+  Lift       : 1.0559
+
+  Rule (English):
+    IF the customer is in the 35-44 age group, THEN the customer's transaction frequency is Single (1) AND the customer is Male
+
+  Explanation:
+        Single-transaction customers represent the vast majority (99.75%) of
+    the dataset — understanding which attributes co-occur with these
+    one-time users helps identify why they don't return and what activation
+    strategies might work. Quantitatively, this combination is 6% more
+    likely to occur together than expected by random chance (lift=1.06), and
+    the pattern holds in 76% of cases where the antecedent appears
+    (confidence=0.76). The rule covers 12.5% of all transactions
+    (support=0.1247).
+
+  Recommendation:
+        Position home loan refinancing, children's education funds, and
+    family health insurance cross-sells — this life-stage segment
+    prioritizes family financial security and long-term planning.
+
+================================================================================
+  KEY FINDINGS SUMMARY
+================================================================================
+
+  The association rule mining reveals several non-obvious patterns
+  in the bank transaction data that cannot be found through simple
+  tabulation or aggregation:
+
+  1. DEMOGRAPHIC PATTERNS
+  ----------------------------------------
+     • Male customers are disproportionately associated with low-balance
+       accounts and micro-transactions, reflecting the gender gap in
+       Indian banking where men have more 'utility accounts' while women
+       who bank tend to save more.
+     • The 25-34 age group shows strong association with micro-payment
+       behavior, confirming the digital-native spending pattern of
+       early-career professionals.
+
+  2. TEMPORAL PATTERNS
+  ----------------------------------------
+     • Weekday transactions are strongly linked to routine financial
+       behavior — the weekday-weekend split reveals distinct spending
+       personas that can be targeted separately.
+     • Morning transactions correlate with scheduled payments and
+       branch-hour activities, while night-time transactions signal
+       e-commerce and digital spending behavior.
+
+  3. GEOGRAPHIC PATTERNS
+  ----------------------------------------
+     • Tier-2/3 city customers (OTHER) show distinct banking patterns —
+       lower transaction amounts and higher male dominance compared to
+       metro cities, reflecting differential banking penetration.
+
+  4. SPENDING BEHAVIOR PATTERNS
+  ----------------------------------------
+     • Very low balance + micro-transaction is a strong co-occurrence,
+       identifying the 'transit account' segment — customers who use
+       banking purely as a payment channel with no savings intent.
+     • This pattern presents a clear opportunity for micro-savings
+       product interventions (round-ups, automatic sweep).
+
+  STRATEGIC IMPLICATION
+  ----------------------------------------
+     These co-occurrence patterns, invisible through simple frequency
+     counts, enable the bank to move from demographic-only segmentation
+     to behavioral micro-segments — combining WHO the customer is with
+     WHEN and HOW they transact for precision product targeting.
+
+================================================================================
+  END OF REPORT
+================================================================================
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | INTERPRETATION COMPLETE — 12 rules documented
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.pipeline |   PIPELINE COMPLETE -- 304.9s
+2026-05-26 10:35:50 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.pipeline |        BANK TRANSACTIONS -- ASSOCIATION RULE MINING        
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.pipeline | Input  : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.pipeline | Output : D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.pipeline | -- STEP 1 / 3 : LOAD & DISCRETIZE ---------------------------
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.discretize | STEP 1 : LOAD & DISCRETIZE
+2026-05-26 10:37:32 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-26 10:37:32 | INFO     | src.stage1_ETL.extract | Loading raw data from: D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\raw\bank_transactions.csv
+2026-05-26 10:37:33 | INFO     | src.stage1_ETL.extract | Loaded 1,048,567 rows × 9 columns
+2026-05-26 10:37:33 | INFO     | src.stage1_ETL.extract | Computing customer stats on raw data (before any drops)
+2026-05-26 10:37:34 | INFO     | src.stage1_ETL.extract |   Unique customers: 884,265
+2026-05-26 10:37:34 | INFO     | src.stage1_ETL.extract |   customer_freq — min: 1, max: 6, mean: 1.19
+2026-05-26 10:37:34 | INFO     | src.stage3_ARM.discretize | Applying Stage 1 cleaning steps (reused from ETL)...
+2026-05-26 10:37:35 | INFO     | src.stage1_ETL.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
+2026-05-26 10:37:35 | INFO     | src.stage1_ETL.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
+2026-05-26 10:37:35 | INFO     | src.stage1_ETL.transform | [Missing] Columns with nulls:
+customer_dob            3397
+cust_gender             1100
+cust_location            151
+cust_account_balance    2369
+2026-05-26 10:37:35 | INFO     | src.stage1_ETL.transform | [Missing] Dropped 6,953 rows with nulls — 1,041,614 remaining
+2026-05-26 10:38:11 | INFO     | src.stage1_ETL.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
+2026-05-26 10:38:12 | INFO     | src.stage1_ETL.transform | [Types] Invalid TransactionTime values: 0
+2026-05-26 10:40:55 | INFO     | src.stage1_ETL.transform | [Types] Conversion complete
+2026-05-26 10:41:01 | WARNING  | src.stage1_ETL.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
+2026-05-26 10:41:01 | WARNING  | src.stage1_ETL.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
+2026-05-26 10:41:01 | WARNING  | src.stage1_ETL.transform | [KYC] Mining conclusions reflect customers with verified identity only
+2026-05-26 10:41:02 | INFO     | src.stage1_ETL.transform | [KYC] Remaining: 739,899 rows
+2026-05-26 10:41:02 | INFO     | src.stage1_ETL.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
+2026-05-26 10:41:02 | INFO     | src.stage1_ETL.transform | [Gender] Distribution:
+cust_gender
+M    540772
+F    199126
+2026-05-26 10:41:02 | INFO     | src.stage1_ETL.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
+2026-05-26 10:41:03 | INFO     | src.stage1_ETL.transform | [Location] Top 5 after merge:
+cust_location
+DELHI        109558
+MUMBAI        72329
+BANGALORE     57729
+GURGAON       52606
+NOIDA         23200
+2026-05-26 10:41:03 | INFO     | src.stage1_ETL.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
+2026-05-26 10:41:03 | INFO     | src.stage1_ETL.transform | [Age] Stats — min:0, max:89, mean:30.7
+2026-05-26 10:41:04 | INFO     | src.stage1_ETL.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
+2026-05-26 10:41:04 | INFO     | src.stage1_ETL.transform | [Stats] Merged customer stats — shape: (699261, 18)
+2026-05-26 10:41:04 | INFO     | src.stage1_ETL.transform | [Stats] customer_freq — mean: 1.00, max: 3
+2026-05-26 10:41:04 | INFO     | src.stage3_ARM.discretize | After cleaning: 699,261 rows × 18 columns
+2026-05-26 10:41:04 | INFO     | src.stage3_ARM.discretize | Discretizing continuous variables into categorical bins...
+2026-05-26 10:41:05 | INFO     | src.stage3_ARM.discretize | [Discretize] Balance groups:
+balance_group
+High (100K-500K)      86472
+Low (5K-25K)         235887
+Medium (25K-100K)    167019
+Very High (>500K)     26078
+Very Low (<5K)       183805
+2026-05-26 10:41:05 | INFO     | src.stage3_ARM.discretize | [Discretize] Transaction amount groups:
+txn_amount_group
+Large (2K-10K)        84504
+Medium (500-2K)      210611
+Micro (<100)         137351
+Small (100-500)      252653
+Very Large (>10K)     14142
+2026-05-26 10:41:05 | INFO     | src.stage3_ARM.discretize | [Discretize] Age groups:
+age_group
+18-24    155992
+25-34    375709
+35-44    114736
+45-54     33627
+55-64     12409
+65+        5451
+<18        1337
+2026-05-26 10:41:05 | INFO     | src.stage3_ARM.discretize | [Discretize] Frequency groups:
+freq_group
+Occasional (2-3)      3281
+Single (1)          695980
+2026-05-26 10:41:05 | INFO     | src.stage3_ARM.discretize | [Discretize] Seasons:
+season
+Autumn    263962
+Summer    435299
+2026-05-26 10:41:06 | INFO     | src.stage3_ARM.discretize | [Discretize] Day type:
+day_type
+Weekday    483942
+Weekend    215319
+2026-05-26 10:41:09 | INFO     | src.stage3_ARM.discretize | [Discretize] Location groups (top 15 + OTHER):
+location
+OTHER          278825
+DELHI          101605
+MUMBAI          69208
+BANGALORE       55119
+GURGAON         50362
+NOIDA           22512
+CHENNAI         19571
+PUNE            17132
+HYDERABAD       15541
+THANE           14861
+KOLKATA         13419
+GHAZIABAD       10404
+NAVI MUMBAI      8558
+AHMEDABAD        8019
+FARIDABAD        7564
+JAIPUR           6561
+2026-05-26 10:41:09 | INFO     | src.stage3_ARM.discretize | [Discretize] Gender:
+gender
+M    505715
+F    193546
+2026-05-26 10:41:09 | INFO     | src.stage3_ARM.discretize | [Discretize] Time period:
+time_period
+Evening (16-20)             205472
+Night (20-00)               177359
+Midday/Afternoon (12-16)    170033
+Morning (08-12)             100042
+Late Night (00-04)           24688
+Early Morning (04-08)        21667
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.discretize | [Transactions] Built 699,261 transaction baskets with 9 item dimensions
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.discretize | [Transactions] Sample basket: ['balance_group=Low (5K-25K)', 'txn_amount_group=Micro (<100)', 'age_group=18-24', 'freq_group=Single (1)', 'season=Summer', 'day_type=Weekday', 'location=OTHER', 'gender=F', 'time_period=Midday/Afternoon (12-16)']
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.discretize | DISCRETIZATION COMPLETE — 699,261 transactions ready
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.discretize | ============================================================
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.pipeline | -- STEP 2 / 3 : APRIORI MINING & RULE GENERATION ------------
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.mine | STEP 2 : APRIORI MINING & RULE GENERATION
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-26 10:43:04 | INFO     | src.stage3_ARM.mine | Encoding transaction baskets into boolean matrix...
+2026-05-26 10:43:06 | INFO     | src.stage3_ARM.mine |   Transaction matrix shape: (699261, 47)
+2026-05-26 10:43:06 | INFO     | src.stage3_ARM.mine |   Total unique items: 47
+2026-05-26 10:43:06 | INFO     | src.stage3_ARM.mine | Running Apriori (min_support=0.05, max_len=3)...
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   Frequent itemsets found: 657
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |     1-itemsets: 27
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |     2-itemsets: 195
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |     3-itemsets: 435
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine | Generating association rules (min_confidence=0.5)...
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   Raw rules (conf ≥ 0.5): 834
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   After lift filter (≥ 1.05): 66 rules
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   Filtering removed 768 trivial rules
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine | 
+  TOP 15 ASSOCIATION RULES (sorted by Lift):
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   #      Lift   Conf   Supp  Rule
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   --------------------------------------------------------------------------------
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   1      1.29  0.513 0.0776  gender=M, txn_amount_group=Micro (<100) → location=OTHER
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   2      1.14  0.570 0.1120  txn_amount_group=Micro (<100) → day_type=Weekday, gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   3      1.12  0.811 0.0647  balance_group=Very Low (<5K), txn_amount_group=Micro (<100) → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   4      1.11  0.557 0.1465  balance_group=Very Low (<5K) → day_type=Weekday, gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   5      1.11  0.801 0.0776  location=OTHER, txn_amount_group=Micro (<100) → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   6      1.10  0.797 0.0808  age_group=25-34, txn_amount_group=Micro (<100) → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   7      1.10  0.797 0.0968  balance_group=Very Low (<5K), location=OTHER → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   8      1.09  0.791 0.1087  age_group=25-34, balance_group=Very Low (<5K) → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   9      1.09  0.788 0.0519  balance_group=Very Low (<5K), time_period=Night (20-00) → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   10     1.09  0.545 0.0780  time_period=Morning (08-12) → day_type=Weekday, gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   11     1.09  0.785 0.0779  balance_group=Very Low (<5K), txn_amount_group=Small (100-500) → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   12     1.08  0.748 0.0922  season=Summer, txn_amount_group=Micro (<100) → day_type=Weekday
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   13     1.08  0.580 0.0775  balance_group=Low (5K-25K), txn_amount_group=Small (100-500) → age_group=25-34
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   14     1.08  0.779 0.0759  balance_group=Very Low (<5K), season=Autumn → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine |   15     1.08  0.779 0.1465  balance_group=Very Low (<5K), day_type=Weekday → gender=M
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine | MINING COMPLETE — 66 filtered rules (from 834 candidates)
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.mine | ============================================================
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.pipeline | -- STEP 3 / 3 : INTERPRET & EXPORT --------------------------
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | STEP 3 : INTERPRET & EXPORT
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | Exported 66 full rules → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\association_rules_full.csv'
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | Selected 12 diverse top rules covering 5 unique consequent patterns
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | Exported 12 interpreted rules → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\top_rules_interpreted.csv'
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | Exported text report → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\association_rules_report.txt'
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | Exported decisions log → 'D:\CAWU 5\projectDM\Banking_Datasets_Data_Mining\data\stage3_ARM\DECISIONS.md'
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | 
+================================================================================
+  ASSOCIATION RULE MINING — BUSINESS REPORT
+  Bank Transactions Data Mining Project — Stage 3
+================================================================================
+
+MINING SUMMARY
+--------------------------------------------------------------------------------
+  Frequent itemsets discovered : 657
+  Rules generated (conf ≥ 0.5)  : 834
+  Rules after lift filter (≥ 1.05)  : 66
+  Filtering removed            : 768 trivial/independent rules
+  Top rules documented          : 12
+  Min support threshold         : 0.05 (5%)
+  Min confidence threshold      : 0.5 (50%)
+  Min lift threshold            : 1.05
+
+  Lift range   : 1.05 – 1.29
+  Conf range   : 0.513 – 0.811
+  Supp range   : 0.0519 – 0.3036
+
+THRESHOLD JUSTIFICATION
+--------------------------------------------------------------------------------
+  • Support ≥ 5%     : Each itemset must appear in at least ~35K of ~700K
+                       transactions — statistically significant, not noise.
+  • Confidence ≥ 50% : A rule must hold at least half the time to be
+                       presented as a finding (below 50% = wrong more often
+                       than right).
+  • Lift ≥ 1.05      : The co-occurrence must be at least 5% stronger than
+                       random baseline. Lift = 1.0 means statistically
+                       independent (no real association). This threshold
+                       removed 768 rules that passed confidence
+                       but showed no meaningful association.
+
+================================================================================
+  RANKED RULES WITH BUSINESS INTERPRETATION
+================================================================================
+
+  Rule #1
+  ----------------------------------------------------------------------------
+  Pattern    : gender=M, txn_amount_group=Micro (<100)
+             → location=OTHER
+  Support    : 0.0776 (7.76%)
+  Confidence : 0.5128 (51.3%)
+  Lift       : 1.2860
+
+  Rule (English):
+    IF the customer is Male AND the transaction amount is Micro (<100), THEN the customer is located in OTHER
+
+  Explanation:
+        Male customers dominate micro-transactions (<₹100) because men in
+    India are more likely to use UPI for small daily purchases — street
+    food, tea shops, parking, and auto-rickshaw fares — while female
+    customers tend to make fewer but larger planned purchases. Tier-2 and
+    Tier-3 city customers (grouped as 'OTHER') skew heavily male because
+    banking penetration in smaller Indian cities still disproportionately
+    favors men — women in these regions are less likely to have independent
+    bank accounts due to socioeconomic and cultural factors. Quantitatively,
+    this combination is 29% more likely to occur together than expected by
+    random chance (lift=1.29), and the pattern holds in 51% of cases where
+    the antecedent appears (confidence=0.51). The rule covers 7.8% of all
+    transactions (support=0.0776).
+
+  Recommendation:
+        Invest in Tier-2/3 city digital banking infrastructure — UPI-based
+    merchant onboarding, regional language app interfaces, and local
+    business banking products to capture the under-served market.
+
+  Rule #2
+  ----------------------------------------------------------------------------
+  Pattern    : txn_amount_group=Micro (<100)
+             → day_type=Weekday, gender=M
+  Support    : 0.1120 (11.20%)
+  Confidence : 0.5700 (57.0%)
+  Lift       : 1.1356
+
+  Rule (English):
+    IF the transaction amount is Micro (<100), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        Male customers dominate micro-transactions (<₹100) because men in
+    India are more likely to use UPI for small daily purchases — street
+    food, tea shops, parking, and auto-rickshaw fares — while female
+    customers tend to make fewer but larger planned purchases. Weekday
+    transactions reflect the working economy — salary credits, business
+    payments, scheduled EMIs, and routine purchases during office hours
+    dominate weekday volumes. Quantitatively, this combination is 14% more
+    likely to occur together than expected by random chance (lift=1.14), and
+    the pattern holds in 57% of cases where the antecedent appears
+    (confidence=0.57). The rule covers 11.2% of all transactions
+    (support=0.1120).
+
+  Recommendation:
+        Optimize bill payment and recurring transfer UX for weekday users —
+    introduce one-tap bill pay, smart payment reminders, and auto-schedule
+    features that align with the routine financial behavior of this segment.
+
+  Rule #3
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K), txn_amount_group=Micro (<100)
+             → gender=M
+  Support    : 0.0647 (6.47%)
+  Confidence : 0.8109 (81.1%)
+  Lift       : 1.1213
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K) AND the transaction amount is Micro (<100), THEN the customer is Male
+
+  Explanation:
+        Customers with very low account balances (<₹5K) making micro
+    transactions (<₹100) represent the underbanked segment — these accounts
+    are likely used only for basic UPI payments (chai, auto-rickshaw, mobile
+    recharges) with no savings behavior. Quantitatively, this combination is
+    12% more likely to occur together than expected by random chance
+    (lift=1.12), and the pattern holds in 81% of cases where the antecedent
+    appears (confidence=0.81). The rule covers 6.5% of all transactions
+    (support=0.0647).
+
+  Recommendation:
+        Launch a 'Smart Savings' feature that automatically rounds up each
+    micro-transaction to the nearest ₹10 and deposits the difference into a
+    savings jar — this converts frequent micro-spenders into savers with
+    zero behavioral friction.
+
+  Rule #4
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K)
+             → day_type=Weekday, gender=M
+  Support    : 0.1465 (14.65%)
+  Confidence : 0.5573 (55.7%)
+  Lift       : 1.1103
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        The strong association between very low balances and male customers
+    reflects India's gender banking gap — men are more likely to have
+    'salary accounts' opened by employers with minimal savings behavior,
+    while women who do bank tend to maintain higher balances due to
+    conservative saving habits and gold-linked deposits. Weekday
+    transactions reflect the working economy — salary credits, business
+    payments, scheduled EMIs, and routine purchases during office hours
+    dominate weekday volumes. Quantitatively, this combination is 11% more
+    likely to occur together than expected by random chance (lift=1.11), and
+    the pattern holds in 56% of cases where the antecedent appears
+    (confidence=0.56). The rule covers 14.6% of all transactions
+    (support=0.1465).
+
+  Recommendation:
+        Introduce weekday 'Salary Day' savings nudges — on common salary
+    credit days (1st, 7th, 15th), auto-prompt the customer to lock a portion
+    into a 7-day flexi-deposit before it's spent, converting transit
+    accounts into savings vehicles.
+
+  Rule #5
+  ----------------------------------------------------------------------------
+  Pattern    : location=OTHER, txn_amount_group=Micro (<100)
+             → gender=M
+  Support    : 0.0776 (7.76%)
+  Confidence : 0.8010 (80.1%)
+  Lift       : 1.1076
+
+  Rule (English):
+    IF the customer is located in OTHER AND the transaction amount is Micro (<100), THEN the customer is Male
+
+  Explanation:
+        Male customers dominate micro-transactions (<₹100) because men in
+    India are more likely to use UPI for small daily purchases — street
+    food, tea shops, parking, and auto-rickshaw fares — while female
+    customers tend to make fewer but larger planned purchases. Tier-2 and
+    Tier-3 city customers (grouped as 'OTHER') skew heavily male because
+    banking penetration in smaller Indian cities still disproportionately
+    favors men — women in these regions are less likely to have independent
+    bank accounts due to socioeconomic and cultural factors. Quantitatively,
+    this combination is 11% more likely to occur together than expected by
+    random chance (lift=1.11), and the pattern holds in 80% of cases where
+    the antecedent appears (confidence=0.80). The rule covers 7.8% of all
+    transactions (support=0.0776).
+
+  Recommendation:
+        Invest in Tier-2/3 city digital banking infrastructure — UPI-based
+    merchant onboarding, regional language app interfaces, and local
+    business banking products to capture the under-served market.
+
+  Rule #6
+  ----------------------------------------------------------------------------
+  Pattern    : time_period=Morning (08-12)
+             → day_type=Weekday, gender=M
+  Support    : 0.0780 (7.80%)
+  Confidence : 0.5451 (54.5%)
+  Lift       : 1.0860
+
+  Rule (English):
+    IF the transaction happens during Morning (08-12), THEN the transaction is on a Weekday AND the customer is Male
+
+  Explanation:
+        Morning weekday transactions represent the routine financial rhythm
+    of working professionals — salary-day ATM withdrawals, commute-related
+    UPI payments, and scheduled auto-debits for bills and EMIs that execute
+    during business hours. Quantitatively, this combination is 9% more
+    likely to occur together than expected by random chance (lift=1.09), and
+    the pattern holds in 55% of cases where the antecedent appears
+    (confidence=0.55). The rule covers 7.8% of all transactions
+    (support=0.0780).
+
+  Recommendation:
+        Schedule promotional SMS/app notifications for 7-8 AM
+    (pre-transaction window) with personalized offers — 'Good morning! Pay
+    your electricity bill via our app today and earn ₹50 cashback.' Timing
+    aligns with when this segment is most financially active.
+
+  Rule #7
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Low (5K-25K), txn_amount_group=Small (100-500)
+             → age_group=25-34
+  Support    : 0.0775 (7.75%)
+  Confidence : 0.5802 (58.0%)
+  Lift       : 1.0798
+
+  Rule (English):
+    IF the customer's account balance is Low (5K-25K) AND the transaction amount is Small (100-500), THEN the customer is in the 25-34 age group
+
+  Explanation:
+        Customers maintaining ₹5K-25K balances while making small
+    transactions (₹100-500) represent the core middle-class Indian banking
+    customer — their spending on daily essentials (groceries, transport,
+    utility recharges) stays within the ₹100-500 band, and their balance
+    reflects moderate but not aggressive saving behavior. Quantitatively,
+    this combination is 8% more likely to occur together than expected by
+    random chance (lift=1.08), and the pattern holds in 58% of cases where
+    the antecedent appears (confidence=0.58). The rule covers 7.7% of all
+    transactions (support=0.0775).
+
+  Recommendation:
+        Introduce 'Step-Up Savings' accounts for 25-34 year-olds with
+    ₹5K-25K balances — automatically increase the savings rate by 1% each
+    month, paired with cashback on essential spending (₹100-500
+    transactions) to reward the behavior this segment already exhibits.
+
+  Rule #8
+  ----------------------------------------------------------------------------
+  Pattern    : time_period=Night (20-00), txn_amount_group=Small (100-500)
+             → age_group=25-34
+  Support    : 0.0552 (5.52%)
+  Confidence : 0.5777 (57.8%)
+  Lift       : 1.0752
+
+  Rule (English):
+    IF the transaction happens during Night (20-00) AND the transaction amount is Small (100-500), THEN the customer is in the 25-34 age group
+
+  Explanation:
+        Night-time transactions (8PM-midnight) are predominantly digital —
+    e-commerce purchases, food delivery orders, and subscription renewals
+    that happen when customers browse their phones after work hours.
+    Quantitatively, this combination is 8% more likely to occur together
+    than expected by random chance (lift=1.08), and the pattern holds in 58%
+    of cases where the antecedent appears (confidence=0.58). The rule covers
+    5.5% of all transactions (support=0.0552).
+
+  Recommendation:
+        Launch evening-targeted 'Night Owl Deals' for 25-34 year-olds —
+    card-linked offers with food delivery apps (Swiggy, Zomato) and
+    e-commerce platforms during 8PM-midnight, when this digital-native
+    segment is most active online.
+
+  Rule #9
+  ----------------------------------------------------------------------------
+  Pattern    : balance_group=Very Low (<5K)
+             → freq_group=Single (1), gender=M
+  Support    : 0.2032 (20.32%)
+  Confidence : 0.7731 (77.3%)
+  Lift       : 1.0742
+
+  Rule (English):
+    IF the customer's account balance is Very Low (<5K), THEN the customer's transaction frequency is Single (1) AND the customer is Male
+
+  Explanation:
+        The strong association between very low balances and male customers
+    reflects India's gender banking gap — men are more likely to have
+    'salary accounts' opened by employers with minimal savings behavior,
+    while women who do bank tend to maintain higher balances due to
+    conservative saving habits and gold-linked deposits. Quantitatively,
+    this combination is 7% more likely to occur together than expected by
+    random chance (lift=1.07), and the pattern holds in 77% of cases where
+    the antecedent appears (confidence=0.77). The rule covers 20.3% of all
+    transactions (support=0.2032).
+
+  Recommendation:
+        Offer micro-savings products with gamification — implement 'balance
+    milestones' (₹5K, ₹10K, ₹25K) with small rewards (cashback, lucky draws)
+    to gradually shift low-balance customers into the savings habit.
+
+  Rule #10
+  ----------------------------------------------------------------------------
+  Pattern    : gender=M, txn_amount_group=Small (100-500)
+             → age_group=25-34
+  Support    : 0.1543 (15.43%)
+  Confidence : 0.5757 (57.6%)
+  Lift       : 1.0715
+
+  Rule (English):
+    IF the customer is Male AND the transaction amount is Small (100-500), THEN the customer is in the 25-34 age group
+
+  Explanation:
+        Male customers in the small-transaction tier (₹100-500) represent
+    daily essential spending — groceries, fuel, quick-service restaurants,
+    and commute costs. The male skew reflects higher financial autonomy in
+    daily household spending decisions in the Indian context.
+    Quantitatively, this combination is 7% more likely to occur together
+    than expected by random chance (lift=1.07), and the pattern holds in 58%
+    of cases where the antecedent appears (confidence=0.58). The rule covers
+    15.4% of all transactions (support=0.1543).
+
+  Recommendation:
+        Deploy 'Smart Spend' analytics for 25-34 year-old male customers —
+    categorize their ₹100-500 transactions automatically and offer
+    personalized budgeting insights via the mobile app, turning routine
+    spending data into a value-added engagement tool.
+
+  Rule #11
+  ----------------------------------------------------------------------------
+  Pattern    : txn_amount_group=Micro (<100)
+             → freq_group=Single (1), gender=M
+  Support    : 0.1506 (15.06%)
+  Confidence : 0.7666 (76.7%)
+  Lift       : 1.0651
+
+  Rule (English):
+    IF the transaction amount is Micro (<100), THEN the customer's transaction frequency is Single (1) AND the customer is Male
+
+  Explanation:
+        Male customers dominate micro-transactions (<₹100) because men in
+    India are more likely to use UPI for small daily purchases — street
+    food, tea shops, parking, and auto-rickshaw fares — while female
+    customers tend to make fewer but larger planned purchases.
+    Quantitatively, this combination is 7% more likely to occur together
+    than expected by random chance (lift=1.07), and the pattern holds in 77%
+    of cases where the antecedent appears (confidence=0.77). The rule covers
+    15.1% of all transactions (support=0.1506).
+
+  Recommendation:
+        Design re-engagement campaigns for single-transaction customers —
+    trigger an automated welcome series (Day 3, 7, 14, 30) with personalized
+    incentives to drive a second transaction.
+
+  Rule #12
+  ----------------------------------------------------------------------------
+  Pattern    : age_group=35-44
+             → freq_group=Single (1), gender=M
+  Support    : 0.1247 (12.47%)
+  Confidence : 0.7600 (76.0%)
+  Lift       : 1.0559
+
+  Rule (English):
+    IF the customer is in the 35-44 age group, THEN the customer's transaction frequency is Single (1) AND the customer is Male
+
+  Explanation:
+        Single-transaction customers represent the vast majority (99.75%) of
+    the dataset — understanding which attributes co-occur with these
+    one-time users helps identify why they don't return and what activation
+    strategies might work. Quantitatively, this combination is 6% more
+    likely to occur together than expected by random chance (lift=1.06), and
+    the pattern holds in 76% of cases where the antecedent appears
+    (confidence=0.76). The rule covers 12.5% of all transactions
+    (support=0.1247).
+
+  Recommendation:
+        Position home loan refinancing, children's education funds, and
+    family health insurance cross-sells — this life-stage segment
+    prioritizes family financial security and long-term planning.
+
+================================================================================
+  KEY FINDINGS SUMMARY
+================================================================================
+
+  The association rule mining reveals several non-obvious patterns
+  in the bank transaction data that cannot be found through simple
+  tabulation or aggregation:
+
+  1. DEMOGRAPHIC PATTERNS
+  ----------------------------------------
+     • Male customers are disproportionately associated with low-balance
+       accounts and micro-transactions, reflecting the gender gap in
+       Indian banking where men have more 'utility accounts' while women
+       who bank tend to save more.
+     • The 25-34 age group shows strong association with micro-payment
+       behavior, confirming the digital-native spending pattern of
+       early-career professionals.
+
+  2. TEMPORAL PATTERNS
+  ----------------------------------------
+     • Weekday transactions are strongly linked to routine financial
+       behavior — the weekday-weekend split reveals distinct spending
+       personas that can be targeted separately.
+     • Morning transactions correlate with scheduled payments and
+       branch-hour activities, while night-time transactions signal
+       e-commerce and digital spending behavior.
+
+  3. GEOGRAPHIC PATTERNS
+  ----------------------------------------
+     • Tier-2/3 city customers (OTHER) show distinct banking patterns —
+       lower transaction amounts and higher male dominance compared to
+       metro cities, reflecting differential banking penetration.
+
+  4. SPENDING BEHAVIOR PATTERNS
+  ----------------------------------------
+     • Very low balance + micro-transaction is a strong co-occurrence,
+       identifying the 'transit account' segment — customers who use
+       banking purely as a payment channel with no savings intent.
+     • This pattern presents a clear opportunity for micro-savings
+       product interventions (round-ups, automatic sweep).
+
+  STRATEGIC IMPLICATION
+  ----------------------------------------
+     These co-occurrence patterns, invisible through simple frequency
+     counts, enable the bank to move from demographic-only segmentation
+     to behavioral micro-segments — combining WHO the customer is with
+     WHEN and HOW they transact for precision product targeting.
+
+================================================================================
+  END OF REPORT
+================================================================================
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | INTERPRETATION COMPLETE — 12 rules documented
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.interpret | ============================================================
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.pipeline | ==========================================================
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.pipeline |   PIPELINE COMPLETE -- 340.1s
+2026-05-26 10:43:12 | INFO     | src.stage3_ARM.pipeline | ==========================================================
