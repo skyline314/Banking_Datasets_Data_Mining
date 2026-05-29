@@ -296,10 +296,20 @@ def drop_correlated(df: pd.DataFrame, cols: list) -> pd.DataFrame:
     return df
 
 
-# ── Master transform function ─────────────────────────────────────────────────
-def transform(df: pd.DataFrame, customer_stats: pd.DataFrame) -> pd.DataFrame:
+# ── Base transform (cleaning only — no encoding / normalization) ──────────────
+def transform_base(df: pd.DataFrame, customer_stats: pd.DataFrame) -> pd.DataFrame:
+    """
+    Cleaning-only transform — preserves original column values.
+
+    Applies: dedup → column standardization → null drop → type conversion →
+    uniqueness check → KYC consistency drop → gender filter → location alias
+    merge → age computation → temporal extraction → customer stats merge.
+
+    Returns a DataFrame with original-scale values suitable for discretization
+    (Association Rule Mining) or exploratory analysis.
+    """
     log.info("=" * 60)
-    log.info("START TRANSFORM")
+    log.info("START TRANSFORM (base cleaning)")
     log.info("=" * 60)
 
     df = remove_duplicates(df)
@@ -313,6 +323,25 @@ def transform(df: pd.DataFrame, customer_stats: pd.DataFrame) -> pd.DataFrame:
     df = compute_age(df, AGE_MIN, AGE_MAX)
     df = extract_temporal(df)
     df = merge_customer_stats(df, customer_stats)
+
+    log.info("=" * 60)
+    log.info(f"BASE TRANSFORM COMPLETE — shape: {df.shape}")
+    log.info("=" * 60)
+    return df
+
+
+# ── Full transform (encoding + normalization — for clustering) ────────────────
+def transform(df: pd.DataFrame, customer_stats: pd.DataFrame) -> pd.DataFrame:
+    """
+    Full transform pipeline — cleaning + encoding + normalization.
+
+    Calls transform_base() for cleaning, then applies ordinal/OHE encoding,
+    Yeo-Johnson normalization, and correlation-based feature drops.
+    Output is suitable for distance-based algorithms (K-Means, DBSCAN).
+    """
+    df = transform_base(df, customer_stats)
+
+    log.info("Continuing with encoding + normalization...")
     df = encode_age(df)
     df = encode_categoricals(df, TOP_N_LOCATIONS)
     df = apply_ohe_and_drop(df, COLS_TO_DROP)

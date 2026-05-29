@@ -38,6 +38,7 @@
 28. [Pipeline Architecture — ETL Separation](#28-pipeline-architecture--etl-separation)
 29. [Config Centralization](#29-config-centralization)
 30. [Load Validation Assertions](#30-load-validation-assertions)
+31. [Dual Output — clean.csv + clean_categorical.csv](#31-dual-output--cleancsv--clean_categoricalcsv)
 
 ---
 
@@ -769,4 +770,52 @@ issue after running a 2-hour clustering job on corrupt data.
 
 ---
 
-*Document version: 1.0 — covers all decisions from EDA through ETL pipeline construction.*
+## 31. Dual Output — clean.csv + clean_categorical.csv
+
+**Decision:** Produce two CSV files from Stage 1:
+- `clean.csv` — normalised and encoded features (for clustering / distance-based ML)
+- `clean_categorical.csv` — cleaned data with original-scale values (for ARM / EDA)
+
+**Justification:**
+`clean.csv` contains Yeo-Johnson normalised floats and OHE-encoded columns.
+This format is required for distance-based algorithms (K-Means, DBSCAN) but is
+**fundamentally incompatible** with Association Rule Mining (ARM), which requires
+domain-meaningful categorical items like `balance_group=High (100K-500K)`.
+
+Discretizing normalised values (e.g. `-0.787`) into rupee-based bins is
+meaningless because Yeo-Johnson is a non-linear power transform — the mapping
+between normalised values and original rupee values is not recoverable without
+the fitted transformer object.
+
+Previously, Stage 3 worked around this by re-reading the raw CSV and re-running
+all cleaning steps. While functionally correct (the cleaning functions were
+imported from Stage 1 with no code duplication), this approach:
+- Wasted compute by re-processing ~1M rows of cleaning
+- Created a hidden dependency on the raw data file for Stage 3
+- Violated single-source-of-truth — the cleaned dataset should be the
+  canonical output of Stage 1, not re-derived by each consumer
+
+**Implementation:**
+The `transform()` function was refactored into:
+- `transform_base()` — cleaning steps 1–11 (dedup through customer stats merge)
+- `transform()` — calls `transform_base()` + encoding + normalization
+
+The pipeline runs `transform_base()` once, exports `clean_categorical.csv`
+from the result, then continues with encoding/normalization to produce
+`clean.csv`. Both files contain the same cleaned rows — the difference is
+only in post-cleaning processing.
+
+**Columns in `clean_categorical.csv`:**
+`customer_id`, `cust_gender`, `cust_location`, `cust_account_balance`,
+`transaction_amount_inr`, `age`, `transaction_month`, `is_weekend`,
+`transaction_time_category`, `customer_freq`, `avg_txn_amount`,
+`total_txn_amount`
+
+**Alternative considered:** Keep the raw-data re-processing approach.
+**Why rejected:** Violates ETL single-source-of-truth principle. Two consumers
+reading the same raw file and independently cleaning it could theoretically
+diverge if cleaning logic changes in one place but not the other.
+
+---
+
+*Document version: 1.1 — added dual-output decision (#31).*

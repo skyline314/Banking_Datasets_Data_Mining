@@ -10,7 +10,8 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 
 # ── Data paths ────────────────────────────────────────────────────────────────
 RAW_DATA_PATH       = ROOT_DIR / "data" / "raw"       / "bank_transactions.csv"
-PROCESSED_DATA_PATH = ROOT_DIR / "data" / "stage1_ETL" / "clean.csv"
+PROCESSED_DATA_PATH    = ROOT_DIR / "data" / "stage1_ETL" / "clean.csv"
+CATEGORICAL_DATA_PATH  = ROOT_DIR / "data" / "stage1_ETL" / "clean_categorical.csv"
 LOG_DIR             = ROOT_DIR / "logs"
 
 # ── Stage 2: Clustering ──────────────────────────────────────────────────────
