@@ -29,7 +29,8 @@ def run_project():
     try:
         # ── STAGE 1 : ETL ──────────────────────────────────────────────────
         log.info("🚀 STAGE 1: Starting ETL Pipeline...")
-        etl_success = run_etl(config.RAW_DATA_PATH, config.PROCESSED_DATA_PATH)
+        etl_success = run_etl(config.RAW_DATA_PATH, config.PROCESSED_DATA_PATH,
+                              config.CATEGORICAL_DATA_PATH)
         
         if not etl_success:
             log.error("❌ STAGE 1 FAILED. Aborting project run.")
