@@ -19,7 +19,7 @@ CLUSTERING_INPUT_PATH  = PROCESSED_DATA_PATH          # reads clean.csv from sta
 CLUSTERING_OUTPUT_DIR  = ROOT_DIR / "data" / "stage2_Clustering"
 
 # ── Stage 3: Association Rule Mining ─────────────────────────────────────────
-ASSOC_INPUT_PATH   = RAW_DATA_PATH                    # reads raw CSV for original values
+ASSOC_INPUT_PATH   = CATEGORICAL_DATA_PATH             # reads clean_categorical.csv (original-scale cleaned data)
 ASSOC_OUTPUT_DIR   = ROOT_DIR / "data" / "stage3_ARM"
 
 # Discretization bins — domain-justified for Indian banking context

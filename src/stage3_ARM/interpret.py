@@ -964,10 +964,10 @@ def _build_decisions_doc() -> str:
 
 ---
 
-## 1. Data Source — Raw CSV Instead of clean.csv
+## 1. Data Source — clean_categorical.csv Instead of clean.csv
 
-**Decision:** Read the original `bank_transactions.csv` instead of the Stage 1
-output `clean.csv`.
+**Decision:** Read the `clean_categorical.csv` (pre-cleaned by Stage 1 ETL) instead of the Stage 1
+final output `clean.csv` or raw data.
 
 **Justification:**
 `clean.csv` contains Yeo-Johnson normalised floats — the balance column has
@@ -976,9 +976,9 @@ bins like "₹25K–100K" is meaningless because the normalisation is a non-line
 power transform.
 
 To create domain-meaningful categories, we need the original rupee values.
-The same cleaning steps from Stage 1 (dedup, null drop, KYC, gender filter,
-age computation) are reused by importing the functions directly — no code
-duplication occurs.
+`clean_categorical.csv` retains the original ₹ values (no normalisation) after all Stage 1
+cleaning steps have been applied. Discretizing these values produces domain-meaningful bins 
+without needing to re-run the entire ETL pipeline, making the process much faster.
 
 ---
 

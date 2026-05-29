@@ -1,48 +1,32 @@
 """
-Step 1 — Load raw data, apply the same cleaning as Stage 1, then discretize
+Step 1 — Load clean_categorical.csv (already cleaned in Stage 1) and discretize
 continuous variables into meaningful categorical groups for Apriori mining.
 
-Why raw data instead of clean.csv?
-  clean.csv contains Yeo-Johnson normalised floats — discretizing those
-  would produce meaningless bins.  We need the original ₹ values to create
-  domain-meaningful boundaries (e.g. "Balance: ₹25K–100K").
+Justification for using clean_categorical.csv:
+  This file retains the original ₹ values (no normalisation) after all Stage 1
+  cleaning steps have been applied.  Discretizing these values produces
+  domain-meaningful bins (e.g. "Balance: ₹25K–100K") without needing to
+  re-run the entire ETL pipeline.
 
-Cleaning steps REUSED from Stage 1 (same functions, same config):
-  1. Dedup  →  2. Standardize columns  →  3. Drop nulls  →  4. Type convert
-  5. KYC consistency drop  →  6. Gender filter  →  7. Location alias merge
-  8. Compute age  →  9. Extract temporal features  →  10. Merge customer stats
-
-Encoding/normalisation steps are REPLACED with discretization.
+Columns available in clean_categorical.csv:
+  customer_id, cust_gender, cust_location, cust_account_balance,
+  transaction_amount_inr, age, transaction_month, is_weekend,
+  transaction_time_category, customer_freq, avg_txn_amount, total_txn_amount
 """
 
-import re
 import pandas as pd
 import numpy as np
 from pathlib import Path
 
-from src.stage1_ETL.extract import load_raw, compute_customer_stats
-from src.stage1_ETL.transform import (
-    remove_duplicates,
-    standardize_column_names,
-    drop_missing,
-    convert_types,
-    drop_inconsistent_kyc,
-    filter_gender,
-    merge_location_aliases,
-    compute_age,
-    extract_temporal,
-    merge_customer_stats,
-)
 from src.logger import get_logger
 
 import sys
 from pathlib import Path as _P
 sys.path.insert(0, str(_P(__file__).resolve().parent.parent.parent))
 from config.config import (
-    KYC_FIELDS, LOCATION_ALIAS, VALID_GENDERS,
-    AGE_MIN, AGE_MAX, AGE_BINS, AGE_LABELS,
     BALANCE_BINS, BALANCE_LABELS,
     TXN_AMOUNT_BINS, TXN_AMOUNT_LABELS,
+    AGE_BINS, AGE_LABELS,
     FREQ_BINS, FREQ_LABELS,
     MONTH_SEASON_MAP, TOP_N_LOCATIONS,
 )
@@ -187,7 +171,7 @@ def discretize_gender(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def discretize_time(df: pd.DataFrame) -> pd.DataFrame:
-    """Use the already-computed time category from extract_temporal."""
+    """Use the already-computed time category from Stage 1 ETL."""
     df["time_period"] = df["transaction_time_category"].astype(str)
     log.info(f"[Discretize] Time period:\n"
              f"{df['time_period'].value_counts().to_string()}")
@@ -230,10 +214,14 @@ def build_transactions(df: pd.DataFrame) -> list[list[str]]:
 
 # ── Master discretize function ────────────────────────────────────────────────
 
-def load_and_discretize(raw_path: Path) -> tuple[pd.DataFrame, list[list[str]]]:
+def load_and_discretize(input_path: Path) -> tuple[pd.DataFrame, list[list[str]]]:
     """
-    Full Step 1 — load raw data, clean (reusing Stage 1 functions), and
-    discretize all continuous variables into categorical items.
+    Full Step 1 — load clean_categorical.csv (pre-cleaned by Stage 1 ETL)
+    and discretize all continuous variables into categorical items.
+
+    Parameters
+    ----------
+    input_path : Path — path to clean_categorical.csv
 
     Returns
     -------
@@ -244,24 +232,11 @@ def load_and_discretize(raw_path: Path) -> tuple[pd.DataFrame, list[list[str]]]:
     log.info("STEP 1 : LOAD & DISCRETIZE")
     log.info("=" * 60)
 
-    # ── Load raw data ─────────────────────────────────────────────────────
-    df = load_raw(raw_path)
-    customer_stats = compute_customer_stats(df)
-
-    # ── Clean (reuse Stage 1 functions — NO code duplication) ─────────────
-    log.info("Applying Stage 1 cleaning steps (reused from ETL)...")
-    df = remove_duplicates(df)
-    df = standardize_column_names(df)
-    df = drop_missing(df)
-    df = convert_types(df)
-    df = drop_inconsistent_kyc(df, "customer_id", KYC_FIELDS)
-    df = filter_gender(df, VALID_GENDERS)
-    df = merge_location_aliases(df, LOCATION_ALIAS)
-    df = compute_age(df, AGE_MIN, AGE_MAX)
-    df = extract_temporal(df)
-    df = merge_customer_stats(df, customer_stats)
-
-    log.info(f"After cleaning: {len(df):,} rows × {df.shape[1]} columns")
+    # ── Load pre-cleaned data from Stage 1 ────────────────────────────────
+    log.info(f"Loading pre-cleaned data from: {input_path}")
+    df = pd.read_csv(input_path)
+    log.info(f"Loaded {len(df):,} rows × {df.shape[1]} columns")
+    log.info(f"Columns: {list(df.columns)}")
 
     # ── Discretize continuous variables ───────────────────────────────────
     log.info("Discretizing continuous variables into categorical bins...")
