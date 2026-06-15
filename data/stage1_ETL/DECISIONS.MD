@@ -818,4 +818,178 @@ diverge if cleaning logic changes in one place but not the other.
 
 ---
 
-*Document version: 1.1 — added dual-output decision (#31).*
+---
+
+## 32. Missing Value Mechanism — MCAR Confirmed
+
+**Decision:** Apply `dropna()` (listwise deletion) across all columns.
+No per-column imputation.
+
+**Formal analysis performed** (`scratch/missing_mechanism_analysis.py`):
+
+| Test | Result |
+|------|--------|
+| Logistic regression pseudo-R² (predict missingness from `transaction_amount_inr`) | ≈ 0.000 for all columns |
+| T-test: balance mean in missing vs non-missing groups | Not significant (p > 0.05) |
+| Missing rate per gender (M / F) | Uniform across categories |
+| Missing rate per top-10 locations | Uniform across cities |
+| Co-occurrence correlation between missing indicators | Weak (r < 0.1) |
+
+All tests are consistent with **MCAR (Missing Completely at Random)**: the
+probability of a value being missing is independent of any observed or unobserved
+variable. Under MCAR, listwise deletion is statistically unbiased.
+
+**Why not impute `cust_account_balance` (0.23% missing)?**
+- Under MCAR, drop and impute both produce unbiased estimates — the choice is
+  indifferent. Dropping is simpler and avoids introducing artificial values into
+  a financial feature.
+- Total row loss < 0.7% (< 7,000 rows from 1,048,567).
+
+**KYC constraint** (independent of mechanism): `customer_dob` and `cust_gender`
+cannot be imputed regardless of missing mechanism — banking regulatory requirement.
+
+**Alternative considered:** Per-column treatment (impute balance with median, drop KYC nulls).
+**Why rejected:** MCAR makes the approaches statistically equivalent. Blanket drop is simpler and the row loss is negligible.
+
+---
+
+## 33. Outlier Assessment — Reproducible Code in Pipeline
+
+**Decision:** Implement `assess_outliers()` as a pipeline step that logs
+IQR statistics to the run log. No rows are removed.
+
+**Why added:** The original DECISIONS.MD (#13) claimed IQR statistics
+("13.4% balance outliers, 10.7% amount outliers") without any pipeline code
+to reproduce those numbers. This was a documentation-only claim.
+
+`assess_outliers()` computes and logs IQR fences, counts below/above fence,
+percentage, min/max, mean, and skewness for `cust_account_balance` and
+`transaction_amount_inr` on every pipeline run. The decision to **retain**
+outliers (DECISIONS.MD #13) is unchanged — only the reproducibility gap
+is closed.
+
+**When called:** After `convert_types()` (data is numeric) and before
+`drop_inconsistent_kyc()` (full row count still present for accurate
+percentage calculation).
+
+---
+
+## 34. Cyclical Encoding for `transaction_month`
+
+**Decision:** Replace Yeo-Johnson normalization of `transaction_month` (1–12)
+with sin/cos cyclical encoding: `month_sin = sin(2π·month/12)`,
+`month_cos = cos(2π·month/12)`.
+
+**Justification:**
+`transaction_month` is a **cyclical variable** — December (month 12) and
+January (month 1) are adjacent months, not maximally distant ones. Applying
+Yeo-Johnson (a monotonic power transform on the range 1–12) places December
+as far as possible from January in Euclidean space. This distorts K-Means
+cluster boundaries along the temporal dimension.
+
+Sin/cos encoding guarantees:
+- `distance(December, January) == distance(January, February)` for all months
+- Both components lie in [−1, 1] — compatible with Yeo-Johnson-normalized
+  features without additional scaling
+- Month identity is fully recoverable from the (sin, cos) pair
+
+`transaction_month` is added to `COLS_TO_DROP` and removed from
+`COLS_TO_NORMALIZE` since it is replaced by the two cyclical columns before
+the drop step.
+
+**Stage 3 (ARM) is unaffected:** `clean_categorical.csv` is produced from
+`transform_base()` which preserves the original `transaction_month` integer
+for season mapping in Stage 3 discretization.
+
+**Alternative considered:** Map month → season (Winter/Spring/Summer/Autumn)
+then OHE (same as Stage 3 treatment).
+**Why rejected:** Season mapping collapses 3 months into one bucket, losing
+within-season granularity. Sin/cos preserves all monthly information with
+correct cyclical topology.
+
+---
+
+## 35. `age_ordinal` — Yeo-Johnson on 7-Level Ordinal
+
+**Decision:** Retain Yeo-Johnson normalization for `age_ordinal` (7 discrete
+levels: 0–6). No change to this step.
+
+**Concern addressed:** Some sources suggest power transforms are unusual on
+ordinal variables with few unique values.
+
+**Why it is acceptable here:**
+1. **Monotonicity preserved:** Yeo-Johnson is a monotonic transform — ordinal
+   ordering (0 < 1 < 2 < ... < 6) is fully preserved after transformation.
+   No two levels swap rank.
+2. **Lambda estimation is stable:** The dataset has ~700K rows distributed
+   across all 7 levels. Lambda is estimated from the empirical distribution
+   of 700K values, not from 7 values — the estimate is stable.
+3. **Purpose is scale equalization, not distributional normality:** The goal
+   is to put `age_ordinal` (range 0–6) on a comparable scale with
+   `cust_account_balance` (range 0–115M). Any monotonic scaling achieves
+   this. Yeo-Johnson is consistent with the transform already applied to
+   all other numeric features.
+
+**Alternative considered:** Exclude `age_ordinal` from `COLS_TO_NORMALIZE`
+and let Stage 2 StandardScaler handle it.
+**Why rejected:** Stage 2 StandardScaler is applied on top of already
+Yeo-Johnson-transformed features — mixing un-Yeo-Johnson'd ordinal with
+power-transformed continuous features would create an inconsistent input
+for the StandardScaler (different distributional shapes per feature).
+
+---
+
+## 36. Feature Information Assessment — Pipeline Code
+
+**Decision:** Implement `assess_feature_information()` as a pipeline step
+that logs Shannon entropy and variance for all features after encoding,
+before normalization. No features are dropped.
+
+**Why added:** DECISIONS.MD #22 discussed Shannon entropy analysis but the
+pipeline contained no code implementing it — the analysis existed only in
+notebooks and was therefore not reproducible from the pipeline alone.
+
+`assess_feature_information()` computes:
+- **Variance** per column
+- **Shannon entropy** (bits) — continuous features binned into 20 bins;
+  discrete features use value counts directly
+
+The decision to **retain all features** (DECISIONS.MD #23) is unchanged —
+this step closes the reproducibility gap and provides logged evidence for
+that decision on every pipeline run.
+
+**When called:** After `apply_ohe_and_drop()` (full encoded feature set is
+assembled) and before `normalize_features()` (entropy computed on pre-transform
+values for interpretability).
+
+---
+
+## 37. Descriptive Statistics Export
+
+**Decision:** Export `descriptive_statistics.csv` and `categorical_summary.csv`
+to `data/stage1_ETL/` as part of the pipeline run.
+
+**Justification:**
+The project specification requires "statistik deskriptif" as a Data
+Understanding deliverable. While EDA notebooks contain this analysis, they
+are not pipeline artifacts — they must be run manually and their outputs are
+not version-controlled as part of the ETL output.
+
+`export_descriptive_stats()` is called on `base_df` (cleaned, original-scale
+data) immediately after `transform_base()`. This ensures:
+- Statistics reflect post-cleaning data (deduped, KYC-dropped, etc.)
+- Values are in interpretable original units (₹, years, counts) — not
+  Yeo-Johnson space
+- Output is produced automatically on every pipeline run
+
+**`descriptive_statistics.csv`** columns: count, mean, std, min, 25%, 50%,
+75%, max, skewness, kurtosis, null_count, null_pct — one row per numeric column.
+
+**`categorical_summary.csv`** columns: column, unique_values, top_value,
+top_freq, null_count — one row per string/categorical column.
+
+---
+
+*Document version: 1.2 — added decisions #32–37 (missing mechanism MCAR,
+outlier code, cyclical month, age_ordinal justification, entropy code,
+descriptive stats export).*

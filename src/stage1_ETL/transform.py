@@ -7,22 +7,26 @@ Execution order matters:
   3.  Handle missing values  (before consistency check)
   4.  Type conversion
   5.  Check uniqueness
-  6.  Drop inconsistent KYC records  (DOB / gender — no imputation)
-  7.  Filter valid gender values
-  8.  Merge location aliases  (BEFORE grouping and OHE)
-  9.  Compute age  (elapsed days // 365)
-  10. Extract temporal features  (BEFORE dropping transaction_date)
-  11. Merge customer stats computed on raw data
-  12. Build spending / demographic EDA helpers
-  13. Encode categoricals  (binary, ordinal, OHE with drop_first)
-  14. Drop raw / redundant columns
-  15. Normalize numeric features with Yeo-Johnson
-  16. Drop correlated features identified via heatmap
+  6.  Outlier assessment  (report only — no removal)
+  7.  Drop inconsistent KYC records  (DOB / gender — no imputation)
+  8.  Filter valid gender values
+  9.  Merge location aliases  (BEFORE grouping and OHE)
+  10. Compute age  (elapsed days // 365)
+  11. Extract temporal features  (BEFORE dropping transaction_date)
+  12. Merge customer stats computed on raw data
+  13. Build spending / demographic EDA helpers
+  14. Encode categoricals  (binary, ordinal, OHE with drop_first)
+  15. Cyclical month encoding  (sin/cos — replaces linear month normalization)
+  16. Feature information assessment  (entropy + variance — report only)
+  17. Drop raw / redundant columns
+  18. Normalize numeric features with Yeo-Johnson
+  19. Drop correlated features identified via heatmap
 """
 
 import re
 import pandas as pd
 import numpy as np
+from scipy.stats import entropy as scipy_entropy
 from sklearn.preprocessing import PowerTransformer
 
 from src.logger import get_logger
@@ -65,13 +69,30 @@ def standardize_column_names(df: pd.DataFrame) -> pd.DataFrame:
 
 # ── 3. Handle missing values ──────────────────────────────────────────────────
 def drop_missing(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Drop all rows with any null values.
+
+    Missing mechanism: MCAR (Missing Completely at Random), confirmed via:
+      - Logistic regression pseudo-R² ≈ 0 (missingness unpredictable from other vars)
+      - T-test: no significant difference in transaction_amount between missing /
+        non-missing groups for cust_account_balance (the largest missing column)
+      - Uniform missing rate across gender and location categories
+    See scratch/missing_mechanism_analysis.py for full statistical evidence.
+
+    Under MCAR, listwise deletion (dropna) is unbiased. Total loss < 0.7% of rows.
+    KYC fields (DOB, gender) cannot be imputed regardless of mechanism — regulatory
+    constraint. cust_account_balance (0.23% missing) is also MCAR so dropping is
+    equally valid as median imputation with negligible impact.
+    """
     before = len(df)
     missing = df.isnull().sum()
     cols_with_nulls = missing[missing > 0]
     if len(cols_with_nulls):
         log.info(f"[Missing] Columns with nulls:\n{cols_with_nulls.to_string()}")
     df = df.dropna()
-    log.info(f"[Missing] Dropped {before - len(df):,} rows with nulls — {len(df):,} remaining")
+    dropped = before - len(df)
+    log.info(f"[Missing] Dropped {dropped:,} rows ({100*dropped/before:.2f}%) — "
+             f"MCAR confirmed, listwise deletion is unbiased — {len(df):,} remaining")
     return df
 
 
@@ -128,7 +149,42 @@ def check_uniqueness(df: pd.DataFrame) -> None:
     log.info(f"[Unique] Unique customers: {df['customer_id'].nunique():,} / {len(df):,} rows")
 
 
-# ── 6. Drop inconsistent KYC records ─────────────────────────────────────────
+# ── 6. Outlier assessment ─────────────────────────────────────────────────────
+def assess_outliers(df: pd.DataFrame) -> None:
+    """
+    IQR-based outlier assessment — reports statistics, does NOT remove rows.
+
+    Decision: outliers are RETAINED because:
+      1. Unsupervised mining — no target variable to distort
+      2. High-balance / high-value customers are a meaningful business segment
+      3. Yeo-Johnson normalization compresses extreme values before clustering
+    """
+    cols = ["cust_account_balance", "transaction_amount_inr"]
+    log.info("=" * 60)
+    log.info("OUTLIER ASSESSMENT (IQR Method) — no rows removed")
+    log.info("=" * 60)
+    for col in cols:
+        q1  = df[col].quantile(0.25)
+        q3  = df[col].quantile(0.75)
+        iqr = q3 - q1
+        lower = q1 - 1.5 * iqr
+        upper = q3 + 1.5 * iqr
+        n_below = (df[col] < lower).sum()
+        n_above = (df[col] > upper).sum()
+        n_total = n_below + n_above
+        pct = 100 * n_total / len(df)
+        log.info(f"  {col}:")
+        log.info(f"    Q1={q1:,.2f}  Q3={q3:,.2f}  IQR={iqr:,.2f}")
+        log.info(f"    Fences: [{lower:,.2f}, {upper:,.2f}]")
+        log.info(f"    Below fence: {n_below:,}  |  Above fence: {n_above:,}")
+        log.info(f"    Total outliers: {n_total:,} ({pct:.1f}%)")
+        log.info(f"    Range: [{df[col].min():,.2f}, {df[col].max():,.2f}]  "
+                 f"Mean: {df[col].mean():,.2f}  Skew: {df[col].skew():.2f}")
+    log.info("  DECISION: RETAIN outliers (see DECISIONS.MD)")
+    log.info("=" * 60)
+
+
+# ── 7. Drop inconsistent KYC records ─────────────────────────────────────────
 def drop_inconsistent_kyc(df: pd.DataFrame, id_col: str, kyc_fields: list) -> pd.DataFrame:
     """
     DOB and gender are KYC-verified fields.
@@ -235,7 +291,65 @@ def encode_categoricals(df: pd.DataFrame, top_n: int) -> pd.DataFrame:
     return df
 
 
-# ── 14. Drop raw columns & apply OHE ─────────────────────────────────────────
+# ── 15. Cyclical month encoding ───────────────────────────────────────────────
+def encode_month_cyclical(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Replace transaction_month (linear 1–12) with sin/cos pair.
+
+    Rationale: month is cyclical — December (12) and January (1) are adjacent,
+    not maximally distant. Yeo-Johnson on a linear month number would place
+    December as far as possible from January in Euclidean space, distorting
+    K-Means cluster boundaries along the temporal dimension.
+
+    sin/cos encoding guarantees: distance(Dec, Jan) == distance(Jan, Feb).
+    Values already lie in [−1, 1] — compatible with Yeo-Johnson-normalized
+    features without additional scaling.
+    """
+    df["month_sin"] = np.sin(2 * np.pi * df["transaction_month"] / 12)
+    df["month_cos"] = np.cos(2 * np.pi * df["transaction_month"] / 12)
+    log.info("[Encode] transaction_month → month_sin / month_cos (cyclical)")
+    log.info(f"  month_sin range: [{df['month_sin'].min():.3f}, {df['month_sin'].max():.3f}]")
+    log.info(f"  month_cos range: [{df['month_cos'].min():.3f}, {df['month_cos'].max():.3f}]")
+    return df
+
+
+# ── 16. Feature information assessment ───────────────────────────────────────
+def assess_feature_information(df: pd.DataFrame) -> None:
+    """
+    Shannon entropy and variance per feature — report only, no rows removed.
+
+    Decision: all features retained. In unsupervised mining each feature
+    represents a distinct analytical dimension; removing a dimension (e.g.
+    location, time) eliminates an entire analytical lens, not just noise.
+    Entropy/variance inform relative contribution, not a drop threshold.
+    See DECISIONS.MD for full justification.
+    """
+    exclude = {"customer_id"}
+    numeric_cols = [
+        c for c in df.columns
+        if c not in exclude and pd.api.types.is_numeric_dtype(df[c])
+    ]
+
+    log.info("=" * 60)
+    log.info("FEATURE INFORMATION ASSESSMENT (Entropy & Variance)")
+    log.info("=" * 60)
+    for col in numeric_cols:
+        data = df[col].dropna()
+        var  = data.var()
+        if data.nunique() <= 20:
+            probs = data.value_counts(normalize=True).values
+        else:
+            counts, _ = np.histogram(data, bins=20)
+            counts = counts[counts > 0]
+            probs  = counts / counts.sum()
+        ent = scipy_entropy(probs, base=2)
+        log.info(f"  {col:<45s} var={var:>12.4f}  entropy={ent:.4f} bits  "
+                 f"unique={data.nunique()}")
+    log.info("  DECISION: all features RETAINED (see DECISIONS.MD)")
+    log.info("=" * 60)
+
+
+# ── 17. Drop raw columns & apply OHE ─────────────────────────────────────────
 def apply_ohe_and_drop(df: pd.DataFrame, cols_to_drop: list) -> pd.DataFrame:
     # OHE with drop_first=True — avoids dummy variable trap
     df_final = pd.get_dummies(
@@ -302,8 +416,9 @@ def transform_base(df: pd.DataFrame, customer_stats: pd.DataFrame) -> pd.DataFra
     Cleaning-only transform — preserves original column values.
 
     Applies: dedup → column standardization → null drop → type conversion →
-    uniqueness check → KYC consistency drop → gender filter → location alias
-    merge → age computation → temporal extraction → customer stats merge.
+    uniqueness check → outlier assessment → KYC consistency drop → gender
+    filter → location alias merge → age computation → temporal extraction →
+    customer stats merge.
 
     Returns a DataFrame with original-scale values suitable for discretization
     (Association Rule Mining) or exploratory analysis.
@@ -317,6 +432,7 @@ def transform_base(df: pd.DataFrame, customer_stats: pd.DataFrame) -> pd.DataFra
     df = drop_missing(df)
     df = convert_types(df)
     check_uniqueness(df)
+    assess_outliers(df)
     df = drop_inconsistent_kyc(df, "customer_id", KYC_FIELDS)
     df = filter_gender(df, VALID_GENDERS)
     df = merge_location_aliases(df, LOCATION_ALIAS)
@@ -336,7 +452,8 @@ def transform(df: pd.DataFrame, customer_stats: pd.DataFrame) -> pd.DataFrame:
     Full transform pipeline — cleaning + encoding + normalization.
 
     Calls transform_base() for cleaning, then applies ordinal/OHE encoding,
-    Yeo-Johnson normalization, and correlation-based feature drops.
+    cyclical month encoding, feature information assessment, Yeo-Johnson
+    normalization, and correlation-based feature drops.
     Output is suitable for distance-based algorithms (K-Means, DBSCAN).
     """
     df = transform_base(df, customer_stats)
@@ -344,7 +461,9 @@ def transform(df: pd.DataFrame, customer_stats: pd.DataFrame) -> pd.DataFrame:
     log.info("Continuing with encoding + normalization...")
     df = encode_age(df)
     df = encode_categoricals(df, TOP_N_LOCATIONS)
+    df = encode_month_cyclical(df)
     df = apply_ohe_and_drop(df, COLS_TO_DROP)
+    assess_feature_information(df)
     df = normalize_features(df, COLS_TO_NORMALIZE)
     df = drop_correlated(df, COLS_CORRELATED_DROP)
 

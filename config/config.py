@@ -74,28 +74,39 @@ VALID_GENDERS = ["M", "F"]
 
 # ── Columns dropped before export ─────────────────────────────────────────────
 # customer_id intentionally NOT here — kept as joinable key
+# transaction_month dropped here because cyclical encoding replaces it with
+# month_sin / month_cos (applied in encode_month_cyclical before this drop)
 COLS_TO_DROP = [
     "transaction_id", "customer_dob", "transaction_date",
     "transaction_time", "cust_location", "cust_gender",
     "age_category", "age", "hour",
-    "avg_txn_amount", "total_txn_amount",
-    "transaction_day_of_week",  # correlated with is_weekend (r=0.78)
+    "transaction_month",   # replaced by month_sin / month_cos (cyclical encoding)
 ]
 
 # ── Features normalized with Yeo-Johnson ─────────────────────────────────────
+# transaction_month excluded — handled by cyclical sin/cos encoding instead
+# age_ordinal included: Yeo-Johnson preserves ordinal ordering (monotonic
+# transform) and is used solely to equalize scale with continuous features.
+# With ~700K rows across 7 levels the lambda estimate is stable.
 COLS_TO_NORMALIZE = [
     "cust_account_balance",
     "transaction_amount_inr",
     "customer_freq",
     "age_ordinal",
-    "transaction_month",
 ]
 
 # ── Redundant columns removed after correlation analysis ─────────────────────
-# avg/total already dropped in COLS_TO_DROP (never normalized, no suffix)
-# transaction_day_of_week already dropped in COLS_TO_DROP
-# This list is kept for documentation and future re-runs if config changes
-COLS_CORRELATED_DROP = []
+# Dropped separately from COLS_TO_DROP to make the architectural intent clear:
+# these columns exist in the pipeline but are excluded due to high correlation,
+# not because they are raw/helper columns.
+#   avg_txn_amount      — r ≈ 1.00 with transaction_amount_inr (same transaction)
+#   total_txn_amount    — r ≈ 1.00 with transaction_amount_inr (same transaction)
+#   transaction_day_of_week — r = 0.78 with is_weekend (redundant encoding)
+COLS_CORRELATED_DROP = [
+    "avg_txn_amount",
+    "total_txn_amount",
+    "transaction_day_of_week",
+]
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 LOG_FILE        = LOG_DIR / "pipeline.log"

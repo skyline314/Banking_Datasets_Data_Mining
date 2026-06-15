@@ -116,6 +116,45 @@ def load(df: pd.DataFrame, output_path: Path) -> None:
     log.info(f"[Load] Columns: {df.columns.tolist()}")
 
 
+def export_descriptive_stats(df: pd.DataFrame, output_dir: Path) -> None:
+    """
+    Export descriptive statistics for the base-cleaned dataset.
+
+    Called after transform_base() so values are in original scale (₹, years, etc.)
+    — not Yeo-Johnson transformed. Outputs two files:
+      descriptive_statistics.csv   — numeric: count, mean, std, quartiles, skew, kurtosis
+      categorical_summary.csv      — non-numeric: unique count, mode, top frequency
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    numeric_cols = df.select_dtypes(include="number").columns.tolist()
+    if numeric_cols:
+        stats = df[numeric_cols].describe().T
+        stats["skewness"]   = df[numeric_cols].skew()
+        stats["kurtosis"]   = df[numeric_cols].kurtosis()
+        stats["null_count"] = df[numeric_cols].isnull().sum()
+        stats["null_pct"]   = (df[numeric_cols].isnull().sum() / len(df) * 100).round(4)
+        stats_path = output_dir / "descriptive_statistics.csv"
+        stats.to_csv(stats_path)
+        log.info(f"[EDA] Descriptive statistics → '{stats_path}'")
+
+    cat_cols = df.select_dtypes(include="object").columns.tolist()
+    if cat_cols:
+        summary = []
+        for col in cat_cols:
+            mode_val = df[col].mode()
+            summary.append({
+                "column":        col,
+                "unique_values": df[col].nunique(),
+                "top_value":     mode_val.iloc[0] if not mode_val.empty else "N/A",
+                "top_freq":      int(df[col].value_counts().iloc[0]) if df[col].notna().any() else 0,
+                "null_count":    int(df[col].isnull().sum()),
+            })
+        cat_path = output_dir / "categorical_summary.csv"
+        pd.DataFrame(summary).to_csv(cat_path, index=False)
+        log.info(f"[EDA] Categorical summary → '{cat_path}'")
+
+
 def load_categorical(df: pd.DataFrame, output_path: Path) -> None:
     """
     Select relevant columns, validate, and write clean_categorical.csv.
