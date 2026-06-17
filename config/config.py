@@ -15,8 +15,37 @@ CATEGORICAL_DATA_PATH  = ROOT_DIR / "data" / "stage1_ETL" / "clean_categorical.c
 LOG_DIR             = ROOT_DIR / "logs"
 
 # ── Stage 2: Clustering ──────────────────────────────────────────────────────
-CLUSTERING_INPUT_PATH  = PROCESSED_DATA_PATH          # reads clean.csv from stage 1
-CLUSTERING_OUTPUT_DIR  = ROOT_DIR / "data" / "stage2_Clustering"
+CLUSTERING_INPUT_PATH       = PROCESSED_DATA_PATH     # reads clean.csv from stage 1
+CLUSTERING_CATEGORICAL_PATH = CATEGORICAL_DATA_PATH   # original-scale data for profile merging
+CLUSTERING_OUTPUT_DIR       = ROOT_DIR / "data" / "stage2_Clustering"
+
+# ── Stage 3: Association Rule Mining ─────────────────────────────────────────
+ASSOC_INPUT_PATH   = CATEGORICAL_DATA_PATH             # reads clean_categorical.csv (original-scale cleaned data)
+ASSOC_OUTPUT_DIR   = ROOT_DIR / "data" / "stage3_ARM"
+
+# Discretization bins — domain-justified for Indian banking context
+BALANCE_BINS   = [0, 5_000, 25_000, 100_000, 500_000, float('inf')]
+BALANCE_LABELS = ["Very Low (<5K)", "Low (5K-25K)", "Medium (25K-100K)",
+                  "High (100K-500K)", "Very High (>500K)"]
+
+TXN_AMOUNT_BINS   = [0, 100, 500, 2_000, 10_000, float('inf')]
+TXN_AMOUNT_LABELS = ["Micro (<100)", "Small (100-500)", "Medium (500-2K)",
+                     "Large (2K-10K)", "Very Large (>10K)"]
+
+FREQ_BINS   = [0, 1, 3, float('inf')]
+FREQ_LABELS = ["Single (1)", "Occasional (2-3)", "Frequent (4+)"]
+
+MONTH_SEASON_MAP = {
+    1: "Winter", 2: "Winter", 3: "Spring", 4: "Spring",
+    5: "Spring", 6: "Summer", 7: "Summer", 8: "Summer",
+    9: "Autumn", 10: "Autumn", 11: "Autumn", 12: "Winter",
+}
+
+# Apriori thresholds
+APRIORI_MIN_SUPPORT    = 0.05     # 5% — ~35K transactions minimum
+APRIORI_MIN_CONFIDENCE = 0.50     # 50%
+APRIORI_MIN_LIFT       = 1.05     # Must exceed baseline co-occurrence
+APRIORI_MAX_LEN        = 3        # Max items per itemset
 
 # ── KYC fields — never imputed, only dropped if inconsistent ─────────────────
 KYC_FIELDS = ["customer_dob", "cust_gender"]
@@ -46,28 +75,39 @@ VALID_GENDERS = ["M", "F"]
 
 # ── Columns dropped before export ─────────────────────────────────────────────
 # customer_id intentionally NOT here — kept as joinable key
+# transaction_month dropped here because cyclical encoding replaces it with
+# month_sin / month_cos (applied in encode_month_cyclical before this drop)
 COLS_TO_DROP = [
     "transaction_id", "customer_dob", "transaction_date",
     "transaction_time", "cust_location", "cust_gender",
     "age_category", "age", "hour",
-    "avg_txn_amount", "total_txn_amount",
-    "transaction_day_of_week",  # correlated with is_weekend (r=0.78)
+    "transaction_month",   # replaced by month_sin / month_cos (cyclical encoding)
 ]
 
 # ── Features normalized with Yeo-Johnson ─────────────────────────────────────
+# transaction_month excluded — handled by cyclical sin/cos encoding instead
+# age_ordinal included: Yeo-Johnson preserves ordinal ordering (monotonic
+# transform) and is used solely to equalize scale with continuous features.
+# With ~700K rows across 7 levels the lambda estimate is stable.
 COLS_TO_NORMALIZE = [
     "cust_account_balance",
     "transaction_amount_inr",
     "customer_freq",
     "age_ordinal",
-    "transaction_month",
 ]
 
 # ── Redundant columns removed after correlation analysis ─────────────────────
-# avg/total already dropped in COLS_TO_DROP (never normalized, no suffix)
-# transaction_day_of_week already dropped in COLS_TO_DROP
-# This list is kept for documentation and future re-runs if config changes
-COLS_CORRELATED_DROP = []
+# Dropped separately from COLS_TO_DROP to make the architectural intent clear:
+# these columns exist in the pipeline but are excluded due to high correlation,
+# not because they are raw/helper columns.
+#   avg_txn_amount      — r ≈ 1.00 with transaction_amount_inr (same transaction)
+#   total_txn_amount    — r ≈ 1.00 with transaction_amount_inr (same transaction)
+#   transaction_day_of_week — r = 0.78 with is_weekend (redundant encoding)
+COLS_CORRELATED_DROP = [
+    "avg_txn_amount",
+    "total_txn_amount",
+    "transaction_day_of_week",
+]
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 LOG_FILE        = LOG_DIR / "pipeline.log"

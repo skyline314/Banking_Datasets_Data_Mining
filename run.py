@@ -10,6 +10,7 @@ import traceback
 from config import config
 from src.stage1_ETL.pipeline import run as run_etl
 from src.stage2_Clustering.pipeline import run as run_clustering
+from src.stage3_ARM.pipeline import run as run_association
 from src.logger import get_logger
 
 log = get_logger(__name__)
@@ -17,7 +18,7 @@ log = get_logger(__name__)
 def run_project():
     """
     Run all stages of the project.
-    Currently: Stage 1 (ETL) and Stage 2 (Clustering).
+    Stage 1 (ETL) → Stage 2 (Clustering) → Stage 3 (Association Rule Mining).
     """
     start_time = time.time()
     
@@ -37,14 +38,21 @@ def run_project():
 
         # ── STAGE 2 : CLUSTERING ───────────────────────────────────────────
         log.info("🚀 STAGE 2: Starting Clustering Pipeline...")
-        clustering_success = run_clustering(config.CLUSTERING_INPUT_PATH, config.CLUSTERING_OUTPUT_DIR)
+        clustering_success = run_clustering(config.CLUSTERING_INPUT_PATH,
+                                              config.CLUSTERING_CATEGORICAL_PATH,
+                                              config.CLUSTERING_OUTPUT_DIR)
         
         if not clustering_success:
             log.error("❌ STAGE 2 FAILED. Aborting project run.")
             return False
 
-        # ── STAGE 3 : (Future Placeholder) ──────────────────────────────────
-        # log.info("🚀 STAGE 3: (To be added soon)...")
+        # ── STAGE 3 : ASSOCIATION RULE MINING ──────────────────────────────
+        log.info("🚀 STAGE 3: Starting Association Rule Mining Pipeline...")
+        assoc_success = run_association(config.ASSOC_INPUT_PATH, config.ASSOC_OUTPUT_DIR)
+        
+        if not assoc_success:
+            log.error("❌ STAGE 3 FAILED. Aborting project run.")
+            return False
 
         elapsed = time.time() - start_time
         log.info("╔══════════════════════════════════════════════════════════╗")

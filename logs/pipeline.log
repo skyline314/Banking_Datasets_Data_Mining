@@ -1,54 +1,88 @@
-2026-05-06 10:42:33 | INFO     | src.stage1_ETL.pipeline | ╔══════════════════════════════════════════════════════════╗
-2026-05-06 10:42:33 | INFO     | src.stage1_ETL.pipeline | ║          BANK TRANSACTIONS — ETL PIPELINE                ║
-2026-05-06 10:42:33 | INFO     | src.stage1_ETL.pipeline | ╚══════════════════════════════════════════════════════════╝
-2026-05-06 10:42:33 | INFO     | src.stage1_ETL.pipeline | Input  : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/raw/bank_transactions.csv
-2026-05-06 10:42:33 | INFO     | src.stage1_ETL.pipeline | Output : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean.csv
-2026-05-06 10:42:33 | INFO     | src.stage1_ETL.pipeline | ── STEP 1 / 3 : EXTRACT ────────────────────────────────────
-2026-05-06 10:42:33 | INFO     | src.stage1_ETL.extract | Loading raw data from: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/raw/bank_transactions.csv
-2026-05-06 10:42:34 | INFO     | src.stage1_ETL.extract | Loaded 1,048,567 rows × 9 columns
-2026-05-06 10:42:34 | INFO     | src.stage1_ETL.extract | Computing customer stats on raw data (before any drops)
-2026-05-06 10:42:35 | INFO     | src.stage1_ETL.extract |   Unique customers: 884,265
-2026-05-06 10:42:35 | INFO     | src.stage1_ETL.extract |   customer_freq — min: 1, max: 6, mean: 1.19
-2026-05-06 10:42:35 | INFO     | src.stage1_ETL.pipeline | ── STEP 2 / 3 : TRANSFORM ──────────────────────────────────
-2026-05-06 10:42:35 | INFO     | src.stage1_ETL.transform | ============================================================
-2026-05-06 10:42:35 | INFO     | src.stage1_ETL.transform | START TRANSFORM
-2026-05-06 10:42:35 | INFO     | src.stage1_ETL.transform | ============================================================
-2026-05-06 10:42:36 | INFO     | src.stage1_ETL.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
-2026-05-06 10:42:36 | INFO     | src.stage1_ETL.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
-2026-05-06 10:42:36 | INFO     | src.stage1_ETL.transform | [Missing] Columns with nulls:
+2026-06-15 15:26:42 | INFO     | src.stage1_ETL.pipeline | ╔══════════════════════════════════════════════════════════╗
+2026-06-15 15:26:42 | INFO     | src.stage1_ETL.pipeline | ║          BANK TRANSACTIONS — ETL PIPELINE                ║
+2026-06-15 15:26:42 | INFO     | src.stage1_ETL.pipeline | ╚══════════════════════════════════════════════════════════╝
+2026-06-15 15:26:42 | INFO     | src.stage1_ETL.pipeline | Input       : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/raw/bank_transactions.csv
+2026-06-15 15:26:42 | INFO     | src.stage1_ETL.pipeline | Output      : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean.csv
+2026-06-15 15:26:42 | INFO     | src.stage1_ETL.pipeline | Output (cat): /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean_categorical.csv
+2026-06-15 15:26:42 | INFO     | src.stage1_ETL.pipeline | ── STEP 1 / 5 : EXTRACT ────────────────────────────────────
+2026-06-15 15:26:42 | INFO     | src.stage1_ETL.extract | Loading raw data from: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/raw/bank_transactions.csv
+2026-06-15 15:26:43 | INFO     | src.stage1_ETL.extract | Loaded 1,048,567 rows × 9 columns
+2026-06-15 15:26:43 | INFO     | src.stage1_ETL.extract | Computing customer stats on raw data (before any drops)
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.extract |   Unique customers: 884,265
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.extract |   customer_freq — min: 1, max: 6, mean: 1.19
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.pipeline | ── STEP 2 / 5 : TRANSFORM (base cleaning) ───────────────────
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.transform | START TRANSFORM (base cleaning)
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.transform | [Missing] Columns with nulls:
 customer_dob            3397
 cust_gender             1100
 cust_location            151
 cust_account_balance    2369
-2026-05-06 10:42:36 | INFO     | src.stage1_ETL.transform | [Missing] Dropped 6,953 rows with nulls — 1,041,614 remaining
-2026-05-06 10:42:55 | INFO     | src.stage1_ETL.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
-2026-05-06 10:42:55 | INFO     | src.stage1_ETL.transform | [Types] Invalid TransactionTime values: 0
-2026-05-06 10:43:44 | INFO     | src.stage1_ETL.transform | [Types] Conversion complete
-2026-05-06 10:43:44 | INFO     | src.stage1_ETL.transform | [Unique] transaction_id: unique
-2026-05-06 10:43:44 | INFO     | src.stage1_ETL.transform | [Unique] Unique customers: 879,358 / 1,041,614 rows
-2026-05-06 10:43:46 | WARNING  | src.stage1_ETL.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
-2026-05-06 10:43:46 | WARNING  | src.stage1_ETL.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
-2026-05-06 10:43:46 | WARNING  | src.stage1_ETL.transform | [KYC] Mining conclusions reflect customers with verified identity only
-2026-05-06 10:43:46 | INFO     | src.stage1_ETL.transform | [KYC] Remaining: 739,899 rows
-2026-05-06 10:43:46 | INFO     | src.stage1_ETL.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
-2026-05-06 10:43:46 | INFO     | src.stage1_ETL.transform | [Gender] Distribution:
+2026-06-15 15:26:44 | INFO     | src.stage1_ETL.transform | [Missing] Dropped 6,953 rows (0.66%) — MCAR confirmed, listwise deletion is unbiased — 1,041,614 remaining
+/home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/src/stage1_ETL/transform.py:116: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+  df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
+/home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/src/stage1_ETL/transform.py:116: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+  df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
+2026-06-15 15:27:02 | INFO     | src.stage1_ETL.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
+2026-06-15 15:27:03 | INFO     | src.stage1_ETL.transform | [Types] Invalid TransactionTime values: 0
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform | [Types] Conversion complete
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform | [Unique] transaction_id: unique
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform | [Unique] Unique customers: 879,358 / 1,041,614 rows
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform | OUTLIER ASSESSMENT (IQR Method) — no rows removed
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |   cust_account_balance:
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Q1=4,728.14  Q3=57,428.85  IQR=52,700.71
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Fences: [-74,322.93, 136,479.92]
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Below fence: 0  |  Above fence: 140,263
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Total outliers: 140,263 (13.5%)
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Range: [0.00, 115,035,495.10]  Mean: 114,998.61  Skew: 60.70
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |   transaction_amount_inr:
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Q1=160.00  Q3=1,200.00  IQR=1,040.00
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Fences: [-1,400.00, 2,760.00]
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Below fence: 0  |  Above fence: 110,614
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Total outliers: 110,614 (10.6%)
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |     Range: [0.00, 1,560,034.99]  Mean: 1,566.10  Skew: 47.83
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform |   DECISION: RETAIN outliers (see DECISIONS.MD)
+2026-06-15 15:27:50 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:27:51 | WARNING  | src.stage1_ETL.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
+2026-06-15 15:27:51 | WARNING  | src.stage1_ETL.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
+2026-06-15 15:27:51 | WARNING  | src.stage1_ETL.transform | [KYC] Mining conclusions reflect customers with verified identity only
+2026-06-15 15:27:52 | INFO     | src.stage1_ETL.transform | [KYC] Remaining: 739,899 rows
+2026-06-15 15:27:52 | INFO     | src.stage1_ETL.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
+2026-06-15 15:27:52 | INFO     | src.stage1_ETL.transform | [Gender] Distribution:
 cust_gender
 M    540772
 F    199126
-2026-05-06 10:43:46 | INFO     | src.stage1_ETL.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
-2026-05-06 10:43:46 | INFO     | src.stage1_ETL.transform | [Location] Top 5 after merge:
+2026-06-15 15:27:52 | INFO     | src.stage1_ETL.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
+2026-06-15 15:27:52 | INFO     | src.stage1_ETL.transform | [Location] Top 5 after merge:
 cust_location
 DELHI        109558
 MUMBAI        72329
 BANGALORE     57729
 GURGAON       52606
 NOIDA         23200
-2026-05-06 10:43:46 | INFO     | src.stage1_ETL.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
-2026-05-06 10:43:46 | INFO     | src.stage1_ETL.transform | [Age] Stats — min:0, max:89, mean:30.7
-2026-05-06 10:43:46 | INFO     | src.stage1_ETL.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
-2026-05-06 10:43:47 | INFO     | src.stage1_ETL.transform | [Stats] Merged customer stats — shape: (699261, 18)
-2026-05-06 10:43:47 | INFO     | src.stage1_ETL.transform | [Stats] customer_freq — mean: 1.00, max: 3
-2026-05-06 10:43:47 | INFO     | src.stage1_ETL.transform | [Encode] Age groups:
+2026-06-15 15:27:52 | INFO     | src.stage1_ETL.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
+2026-06-15 15:27:52 | INFO     | src.stage1_ETL.transform | [Age] Stats — min:0, max:89, mean:30.7
+2026-06-15 15:27:52 | INFO     | src.stage1_ETL.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.transform | [Stats] Merged customer stats — shape: (699261, 18)
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.transform | [Stats] customer_freq — mean: 1.00, max: 3
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.transform | BASE TRANSFORM COMPLETE — shape: (699261, 18)
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.pipeline | ── STEP 3 / 5 : EDA (descriptive statistics) ────────────────
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.load | [EDA] Descriptive statistics → '/home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/descriptive_statistics.csv'
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.load | [EDA] Categorical summary → '/home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/categorical_summary.csv'
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.pipeline | ── STEP 4 / 5 : LOAD (clean_categorical.csv) ────────────────
+2026-06-15 15:27:53 | INFO     | src.stage1_ETL.load | [Load-Cat] Output path: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean_categorical.csv
+2026-06-15 15:27:54 | INFO     | src.stage1_ETL.load | [Validate-Cat] All checks passed ✓
+2026-06-15 15:27:56 | INFO     | src.stage1_ETL.load | [Load-Cat] Exported 699,261 rows × 12 columns (49.3 MB)
+2026-06-15 15:27:56 | INFO     | src.stage1_ETL.load | [Load-Cat] Columns: ['customer_id', 'cust_gender', 'cust_location', 'cust_account_balance', 'transaction_amount_inr', 'age', 'transaction_month', 'is_weekend', 'transaction_time_category', 'customer_freq', 'avg_txn_amount', 'total_txn_amount']
+2026-06-15 15:27:56 | INFO     | src.stage1_ETL.pipeline | ── STEP 4b/ 5 : TRANSFORM (encoding + normalization) ────────
+2026-06-15 15:27:56 | INFO     | src.stage1_ETL.transform | [Encode] Age groups:
 age_category
 <18        1337
 18-24    155992
@@ -57,7 +91,7 @@ age_category
 45-54     33627
 55-64     12409
 65+        5451
-2026-05-06 10:43:47 | INFO     | src.stage1_ETL.transform | [Encode] Location groups (top 15 + OTHER):
+2026-06-15 15:27:56 | INFO     | src.stage1_ETL.transform | [Encode] Location groups (top 15 + OTHER):
 location_grouped
 OTHER          278825
 DELHI          101605
@@ -75,451 +109,263 @@ NAVI MUMBAI      8558
 AHMEDABAD        8019
 FARIDABAD        7564
 JAIPUR           6561
-2026-05-06 10:43:47 | INFO     | src.stage1_ETL.transform | [OHE] Shape after encoding + drop: (699261, 28)
-2026-05-06 10:43:47 | INFO     | src.stage1_ETL.transform | [OHE] Columns: ['customer_id', 'cust_account_balance', 'transaction_amount_inr', 'transaction_month', 'is_weekend', 'customer_freq', 'age_ordinal', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE']
-2026-05-06 10:43:50 | INFO     | src.stage1_ETL.transform | [Norm] Yeo-Johnson applied to: ['cust_account_balance', 'transaction_amount_inr', 'customer_freq', 'age_ordinal', 'transaction_month']
-2026-05-06 10:43:50 | INFO     | src.stage1_ETL.transform | [Corr] Dropped correlated features: []
-2026-05-06 10:43:50 | INFO     | src.stage1_ETL.transform | ============================================================
-2026-05-06 10:43:50 | INFO     | src.stage1_ETL.transform | TRANSFORM COMPLETE — final shape: (699261, 28)
-2026-05-06 10:43:50 | INFO     | src.stage1_ETL.transform | ============================================================
-2026-05-06 10:43:50 | INFO     | src.stage1_ETL.pipeline | ── STEP 3 / 3 : LOAD ───────────────────────────────────────
-2026-05-06 10:43:50 | INFO     | src.stage1_ETL.load | [Load] Output path: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean.csv
-2026-05-06 10:43:50 | INFO     | src.stage1_ETL.load | [Validate] All checks passed ✓
-2026-05-06 10:43:55 | INFO     | src.stage1_ETL.load | [Load] Exported 699,261 rows × 28 columns (92.7 MB)
-2026-05-06 10:43:55 | INFO     | src.stage1_ETL.load | [Load] Columns: ['customer_id', 'is_weekend', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized', 'transaction_month_normalized']
-2026-05-06 10:43:55 | INFO     | src.stage1_ETL.pipeline | ╔══════════════════════════════════════════════════════════╗
-2026-05-06 10:43:55 | INFO     | src.stage1_ETL.pipeline | ║  PIPELINE COMPLETE — 81.3s                              ║
-2026-05-06 10:43:55 | INFO     | src.stage1_ETL.pipeline | ╚══════════════════════════════════════════════════════════╝
-2026-05-07 13:21:02 | INFO     | src.stage2_Clustering.pipeline | ╔══════════════════════════════════════════════════════════╗
-2026-05-07 13:21:02 | INFO     | src.stage2_Clustering.pipeline | ║       BANK TRANSACTIONS — CLUSTERING PIPELINE          ║
-2026-05-07 13:21:02 | INFO     | src.stage2_Clustering.pipeline | ╚══════════════════════════════════════════════════════════╝
-2026-05-07 13:21:02 | INFO     | src.stage2_Clustering.pipeline | Input  : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean.csv
-2026-05-07 13:21:02 | INFO     | src.stage2_Clustering.pipeline | Output : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering
-2026-05-07 13:21:02 | INFO     | src.stage2_Clustering.pipeline | ── STEP 1 / 4 : LOAD & PREPARE DATA ───────────────────────
-2026-05-07 13:21:02 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
-2026-05-07 13:21:03 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized', 'transaction_month_normalized']
-2026-05-07 13:21:03 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 4 features, sample size = 10000
-2026-05-07 13:21:03 | INFO     | src.stage2_Clustering.pipeline | ── STEP 2 / 4 : EVALUATE OPTIMAL K ────────────────────────
-2026-05-07 13:21:03 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
-2026-05-07 13:21:17 | INFO     | src.stage2_Clustering.evaluate | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\optimal_k_evaluation.png'.
-2026-05-07 13:21:17 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 3
-2026-05-07 13:21:17 | INFO     | src.stage2_Clustering.pipeline | ── STEP 3 / 4 : APPLY CLUSTERING ──────────────────────────
-2026-05-07 13:21:17 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=3 on full dataset...
-2026-05-07 13:21:18 | INFO     | src.stage2_Clustering.cluster | Generating Dendrograms (Ward Linkage)...
-2026-05-07 13:21:21 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dendrogram_ward.png'.
-2026-05-07 13:21:21 | INFO     | src.stage2_Clustering.cluster | Applying DBSCAN to identify branch-level anomalies/noise...
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.cluster | DBSCAN found 307 noise/outlier points out of 10000 sampled records.
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.pipeline | ── STEP 4 / 4 : PROFILE & EXPORT ──────────────────────────
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.profile | 
-                age_ordinal  cust_account_balance  transaction_amount_inr  customer_freq  Customer_Count
-Cluster_Labels                                                                                          
-0                      0.60                  0.75                    0.76            0.0          260931
-1                     -1.49                 -0.40                   -0.40            0.0          153079
-2                      0.25                 -0.47                   -0.48            0.0          285251
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_profiles_REAL.csv' for the final report.
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.pipeline | ╔══════════════════════════════════════════════════════════╗
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.pipeline | ║  PIPELINE COMPLETE — 20.0s                              ║
-2026-05-07 13:21:22 | INFO     | src.stage2_Clustering.pipeline | ╚══════════════════════════════════════════════════════════╝
-2026-05-07 13:32:25 | INFO     | src.stage2_Clustering.pipeline | ╔══════════════════════════════════════════════════════════╗
-2026-05-07 13:32:25 | INFO     | src.stage2_Clustering.pipeline | ║       BANK TRANSACTIONS — CLUSTERING PIPELINE          ║
-2026-05-07 13:32:25 | INFO     | src.stage2_Clustering.pipeline | ╚══════════════════════════════════════════════════════════╝
-2026-05-07 13:32:25 | INFO     | src.stage2_Clustering.pipeline | Input  : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean.csv
-2026-05-07 13:32:25 | INFO     | src.stage2_Clustering.pipeline | Output : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering
-2026-05-07 13:32:25 | INFO     | src.stage2_Clustering.pipeline | ── STEP 1 / 4 : LOAD & PREPARE DATA ───────────────────────
-2026-05-07 13:32:25 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
-2026-05-07 13:32:26 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized', 'transaction_month_normalized']
-2026-05-07 13:32:26 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 4 features, sample size = 10000
-2026-05-07 13:32:26 | INFO     | src.stage2_Clustering.pipeline | ── STEP 2 / 4 : EVALUATE OPTIMAL K ────────────────────────
-2026-05-07 13:32:26 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\optimal_k_evaluation.png'.
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate | K-evaluation summary:
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate |   K=2  |  WCSS=2,137,207.7  |  Silhouette=0.2721
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate |   K=3  |  WCSS=1,870,091.4  |  Silhouette=0.2715
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate |   K=4  |  WCSS=1,716,521.2  |  Silhouette=0.2401
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate |   K=5  |  WCSS=1,581,013.0  |  Silhouette=0.2538
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate |   K=6  |  WCSS=1,484,194.2  |  Silhouette=0.2580
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate |   K=7  |  WCSS=793,640.2  |  Silhouette=0.2767
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 7 (highest Silhouette Score = 0.2767)
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.pipeline | ── STEP 3 / 4 : APPLY CLUSTERING ──────────────────────────
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=7 on full dataset...
-2026-05-07 13:32:39 | INFO     | src.stage2_Clustering.cluster | Generating Dendrograms (Ward Linkage)...
-2026-05-07 13:32:42 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dendrogram_ward.png'.
-2026-05-07 13:32:42 | INFO     | src.stage2_Clustering.cluster | Applying DBSCAN to identify branch-level anomalies/noise...
-2026-05-07 13:32:43 | INFO     | src.stage2_Clustering.cluster | DBSCAN found 307 noise/outlier points out of 10000 sampled records.
-2026-05-07 13:32:43 | INFO     | src.stage2_Clustering.pipeline | ── STEP 4 / 4 : PROFILE & EXPORT ──────────────────────────
-2026-05-07 13:32:43 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
-2026-05-07 13:32:43 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-07 13:32:43 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
-2026-05-07 13:32:43 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-07 13:32:43 | INFO     | src.stage2_Clustering.profile | 
-                age_ordinal  ...                           Persona
-Cluster_Labels               ...                                  
-0                     -0.14  ...  High-Value Established Customers
-1                     -0.23  ...       Youth / Entry-Level Segment
-2                      0.66  ...             Low-Value Mass Market
-3                      1.42  ...                         Cluster 3
-4                     -1.50  ...                         Cluster 4
-5                      0.18  ...                         Cluster 5
-6                     -0.01  ...                         Cluster 6
+2026-06-15 15:27:56 | INFO     | src.stage1_ETL.transform | [Encode] transaction_month → month_sin / month_cos (cyclical)
+2026-06-15 15:27:56 | INFO     | src.stage1_ETL.transform |   month_sin range: [-1.000, -0.866]
+2026-06-15 15:27:56 | INFO     | src.stage1_ETL.transform |   month_cos range: [-0.500, 0.500]
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform | [OHE] Shape after encoding + drop: (699261, 32)
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform | [OHE] Columns: ['customer_id', 'cust_account_balance', 'transaction_amount_inr', 'transaction_day_of_week', 'is_weekend', 'customer_freq', 'avg_txn_amount', 'total_txn_amount', 'age_ordinal', 'gender_encoded', 'month_sin', 'month_cos', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE']
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform | FEATURE INFORMATION ASSESSMENT (Entropy & Variance)
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   cust_account_balance                          var=653897856258.5424  entropy=0.0159 bits  unique=138579
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   transaction_amount_inr                        var=40719239.5655  entropy=0.0113 bits  unique=68243
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   transaction_day_of_week                       var=      4.2069  entropy=2.8029 bits  unique=7
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   is_weekend                                    var=      0.2131  entropy=0.8908 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   customer_freq                                 var=      0.0048  entropy=0.0433 bits  unique=3
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   avg_txn_amount                                var=40713486.3237  entropy=0.0113 bits  unique=68672
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   total_txn_amount                              var=41020758.6566  entropy=0.0114 bits  unique=68578
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   age_ordinal                                   var=      0.8577  entropy=1.7778 bits  unique=7
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   gender_encoded                                var=      0.2002  entropy=0.8510 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   month_sin                                     var=      0.0042  entropy=0.9842 bits  unique=3
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   month_cos                                     var=      0.0607  entropy=0.9842 bits  unique=3
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   time_Early Morning (04-08)                    var=      0.0300  entropy=0.1993 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   time_Morning (08-12)                          var=      0.1226  entropy=0.5922 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   time_Midday/Afternoon (12-16)                 var=      0.1840  entropy=0.8003 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   time_Evening (16-20)                          var=      0.2075  entropy=0.8736 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   time_Night (20-00)                            var=      0.1893  entropy=0.8170 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_BANGALORE                                 var=      0.0726  entropy=0.3980 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_CHENNAI                                   var=      0.0272  entropy=0.1842 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_DELHI                                     var=      0.1242  entropy=0.5980 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_FARIDABAD                                 var=      0.0107  entropy=0.0862 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_GHAZIABAD                                 var=      0.0147  entropy=0.1116 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_GURGAON                                   var=      0.0668  entropy=0.3734 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_HYDERABAD                                 var=      0.0217  entropy=0.1538 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_JAIPUR                                    var=      0.0093  entropy=0.0767 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_KOLKATA                                   var=      0.0188  entropy=0.1369 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_MUMBAI                                    var=      0.0892  entropy=0.4657 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_NAVI MUMBAI                               var=      0.0121  entropy=0.0953 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_NOIDA                                     var=      0.0312  entropy=0.2053 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_OTHER                                     var=      0.2397  entropy=0.9702 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_PUNE                                      var=      0.0239  entropy=0.1660 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   loc_THANE                                     var=      0.0208  entropy=0.1484 bits  unique=2
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform |   DECISION: all features RETAINED (see DECISIONS.MD)
+2026-06-15 15:27:57 | INFO     | src.stage1_ETL.transform | ============================================================
+2026-06-15 15:28:00 | INFO     | src.stage1_ETL.transform | [Norm] Yeo-Johnson applied to: ['cust_account_balance', 'transaction_amount_inr', 'customer_freq', 'age_ordinal']
+2026-06-15 15:28:00 | INFO     | src.stage1_ETL.transform | [Corr] Dropped correlated features: ['avg_txn_amount', 'total_txn_amount', 'transaction_day_of_week']
+2026-06-15 15:28:00 | INFO     | src.stage1_ETL.pipeline | ── STEP 5 / 5 : LOAD (clean.csv) ────────────────────────────
+2026-06-15 15:28:00 | INFO     | src.stage1_ETL.load | [Load] Output path: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean.csv
+2026-06-15 15:28:00 | INFO     | src.stage1_ETL.load | [Validate] All checks passed ✓
+2026-06-15 15:28:06 | INFO     | src.stage1_ETL.load | [Load] Exported 699,261 rows × 29 columns (101.3 MB)
+2026-06-15 15:28:06 | INFO     | src.stage1_ETL.load | [Load] Columns: ['customer_id', 'is_weekend', 'gender_encoded', 'month_sin', 'month_cos', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized']
+2026-06-15 15:28:06 | INFO     | src.stage1_ETL.pipeline | ╔══════════════════════════════════════════════════════════╗
+2026-06-15 15:28:06 | INFO     | src.stage1_ETL.pipeline | ║  PIPELINE COMPLETE — 83.8s                              ║
+2026-06-15 15:28:06 | INFO     | src.stage1_ETL.pipeline | ╚══════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════╝
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline |        BANK TRANSACTIONS -- CLUSTERING PIPELINE           
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | Input       : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean.csv
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | Categorical : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean_categorical.csv
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | Output      : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | -- STEP 1 / 4 : LOAD & PREPARE DATA -----------------------
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
+2026-06-16 15:38:28 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'month_sin', 'month_cos', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized']
+2026-06-16 15:38:28 | INFO     | src.stage2_Clustering.prepare | Dropped 'customer_freq_normalized' from clustering (variance=0.000000, near-zero after KYC drop)
+2026-06-16 15:38:28 | INFO     | src.stage2_Clustering.prepare | Assessing clustering tendency (Hopkins statistic)...
+2026-06-16 15:38:29 | INFO     | src.stage2_Clustering.prepare |   Hopkins statistic: 0.9946
+2026-06-16 15:38:29 | INFO     | src.stage2_Clustering.prepare |   ✓ Data exhibits significant clustering tendency (H > 0.75)
+2026-06-16 15:38:29 | INFO     | src.stage2_Clustering.prepare | Loading original-scale data from C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean_categorical.csv...
+2026-06-16 15:38:31 | INFO     | src.stage2_Clustering.prepare |   Categorical shape: (699261, 12)
+2026-06-16 15:38:31 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 3 features, sample size = 10000
+2026-06-16 15:38:31 | INFO     | src.stage2_Clustering.pipeline | -- STEP 2 / 4 : EVALUATE OPTIMAL K ------------------------
+2026-06-16 15:38:31 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate | Elbow detected at K=None
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate | K-evaluation summary:
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=2  |  WCSS=1,437,917.5  |  Silhouette=0.2802
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=3  |  WCSS=1,170,495.1  |  Silhouette=0.2781
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=4  |  WCSS=1,017,590.7  |  Silhouette=0.2566
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=5  |  WCSS=883,689.5  |  Silhouette=0.2666
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=6  |  WCSS=787,671.3  |  Silhouette=0.2740
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=7  |  WCSS=709,607.4  |  Silhouette=0.2770
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 2 (highest Silhouette in range 2..5: 0.2802)
+2026-06-16 15:39:28 | WARNING  | src.stage2_Clustering.evaluate | ⚠ Silhouette = 0.2802 < 0.50 — MODERATE cluster overlap. Segments are distinguishable but boundaries are not crisp.
+2026-06-16 15:39:30 | INFO     | src.stage2_Clustering.evaluate | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\optimal_k_evaluation.png'.
+2026-06-16 15:39:30 | INFO     | src.stage2_Clustering.pipeline | -- STEP 3 / 4 : APPLY CLUSTERING --------------------------
+2026-06-16 15:39:30 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=2 on full dataset...
+2026-06-16 15:39:32 | INFO     | src.stage2_Clustering.cluster | Generating Dendrogram (Ward Linkage)...
+2026-06-16 15:39:33 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dendrogram_ward.png'. Cut-line at y=57.1 for K=2.
+2026-06-16 15:39:33 | INFO     | src.stage2_Clustering.cluster | DBSCAN: computing k-distance graph for empirical eps...
+2026-06-16 15:39:33 | INFO     | src.stage2_Clustering.cluster |   k-distance knee at index 188, eps = 0.5653
+2026-06-16 15:39:33 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dbscan_k_distance_plot.png'.
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster | DBSCAN Results (eps=0.5653, min_samples=6):
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |   Clusters found : 7
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |   Noise points   : 107 / 10000 (1.1%)
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 0: 1646 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 1: 5369 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 2: 2199 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 3: 470 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 4: 198 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 5: 6 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 6: 5 points
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.cluster |   DBSCAN Silhouette (excl. noise): 0.1876
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.cluster |   K-Means Silhouette:              0.2802
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.cluster |   → K-Means produces tighter clusters.
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.pipeline | -- STEP 4 / 4 : PROFILE & EXPORT --------------------------
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | ==========================================
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | ==========================================
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | Using index-based merge with categorical data.
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | 
+                age_mean  age_median  age_std  age_min  age_max  cust_account_balance_mean  cust_account_balance_median  cust_account_balance_std  cust_account_balance_min  cust_account_balance_max  transaction_amount_inr_mean  transaction_amount_inr_median  transaction_amount_inr_std  transaction_amount_inr_min  transaction_amount_inr_max  Customer_Count  Pct_of_Total
+Cluster_Labels                                                                                                                                                                                                                                                                                                                                                                     
+0                  35.19        33.0     9.59        2       89                  198216.55                     44535.60                1147408.69                       0.0              1.150355e+08                      2578.88                         1000.0                     8950.37                         0.0                  1560034.99          342416          49.0
+1                  26.41        25.0     4.88        0       89                   16272.05                      6329.43                  42833.15                       0.0              7.004728e+06                       375.53                          199.0                      738.20                         0.0                    64351.00          356845          51.0
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | 
+(Normalized-space cluster centroids for reference:)
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | 
+                age_ordinal_normalized  cust_account_balance_normalized  transaction_amount_inr_normalized
+Cluster_Labels                                                                                            
+0                               0.5697                           0.5617                             0.5860
+1                              -0.5467                          -0.5390                            -0.5623
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | 
+============================================================
+CLUSTER BUSINESS PROFILES — DETAILED REPORT
+(Values in TRUE original units)
+============================================================
 
-[7 rows x 6 columns]
-2026-05-07 13:32:43 | ERROR    | src.stage2_Clustering.pipeline | ╔══════════════════════════════════════════════════════════╗
-2026-05-07 13:32:43 | ERROR    | src.stage2_Clustering.pipeline | ║  PIPELINE FAILED                                          ║
-2026-05-07 13:32:43 | ERROR    | src.stage2_Clustering.pipeline | ╚══════════════════════════════════════════════════════════╝
-2026-05-07 13:32:43 | ERROR    | src.stage2_Clustering.pipeline | Traceback (most recent call last):
-  File "C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\src\stage2_Clustering\pipeline.py", line 61, in run
-    build_and_export_profiles(df_cluster, scaler, output_dir)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\src\stage2_Clustering\profile.py", line 121, in build_and_export_profiles
-    header = (f"\nCluster {cluster_id}: \"{persona['name']}\" "
-                                           ~~~~~~~^^^^^^^^
-TypeError: 'NoneType' object is not subscriptable
+Cluster 0
+------------------------------------------------------------
+  Population  : 342,416 customers (49.0% of total)
+  age                                : mean=       35.19  median=       33.00  std=      9.59
+  cust_account_balance               : mean=₹  198,216.55  median=₹   44,535.60  std=₹1,147,408.69
+  transaction_amount_inr             : mean=₹    2,578.88  median=₹    1,000.00  std=₹  8,950.37
 
-2026-05-07 13:32:43 | ERROR    | src.stage2_Clustering.pipeline | Failed after 18.0s
-2026-05-07 13:34:44 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-07 13:34:44 | INFO     | src.stage2_Clustering.pipeline |        BANK TRANSACTIONS -- CLUSTERING PIPELINE           
-2026-05-07 13:34:44 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-07 13:34:44 | INFO     | src.stage2_Clustering.pipeline | Input  : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean.csv
-2026-05-07 13:34:44 | INFO     | src.stage2_Clustering.pipeline | Output : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering
-2026-05-07 13:34:44 | INFO     | src.stage2_Clustering.pipeline | -- STEP 1 / 4 : LOAD & PREPARE DATA -----------------------
-2026-05-07 13:34:44 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
-2026-05-07 13:34:45 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized', 'transaction_month_normalized']
-2026-05-07 13:34:45 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 4 features, sample size = 10000
-2026-05-07 13:34:45 | INFO     | src.stage2_Clustering.pipeline | -- STEP 2 / 4 : EVALUATE OPTIMAL K ------------------------
-2026-05-07 13:34:45 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\optimal_k_evaluation.png'.
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate | K-evaluation summary:
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate |   K=2  |  WCSS=2,137,207.7  |  Silhouette=0.2721
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate |   K=3  |  WCSS=1,870,091.4  |  Silhouette=0.2715
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate |   K=4  |  WCSS=1,716,521.2  |  Silhouette=0.2401
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate |   K=5  |  WCSS=1,581,013.0  |  Silhouette=0.2538
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate |   K=6  |  WCSS=1,484,194.2  |  Silhouette=0.2580
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate |   K=7  |  WCSS=793,640.2  |  Silhouette=0.2767
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 2 (highest Silhouette in practical range 2..5: 0.2721)
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.pipeline | -- STEP 3 / 4 : APPLY CLUSTERING --------------------------
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=2 on full dataset...
-2026-05-07 13:35:06 | INFO     | src.stage2_Clustering.cluster | Generating Dendrograms (Ward Linkage)...
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dendrogram_ward.png'.
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.cluster | Applying DBSCAN to identify branch-level anomalies/noise...
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.cluster | DBSCAN found 307 noise/outlier points out of 10000 sampled records.
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.pipeline | -- STEP 4 / 4 : PROFILE & EXPORT --------------------------
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.profile | 
-                age_ordinal  ...                           Persona
-Cluster_Labels               ...                                  
-0                      0.56  ...  High-Value Established Customers
-1                     -0.56  ...       Youth / Entry-Level Segment
+Cluster 1
+------------------------------------------------------------
+  Population  : 356,845 customers (51.0% of total)
+  age                                : mean=       26.41  median=       25.00  std=      4.88
+  cust_account_balance               : mean=₹   16,272.05  median=₹    6,329.43  std=₹ 42,833.15
+  transaction_amount_inr             : mean=₹      375.53  median=₹      199.00  std=₹    738.20
 
-[2 rows x 6 columns]
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.profile | 
+============================================================
+QUALITY ASSESSMENT
+============================================================
+  Hopkins statistic : 0.9946
+    → Data has significant clustering tendency.
+  Silhouette score  : 0.2802
+    → Moderate cluster separation — boundaries are fuzzy but distinguishable.
+
+============================================================
+Note: 'customer_freq' was EXCLUDED from clustering features because it is near-constant (99.75% = 1) after the KYC drop in Stage 1, contributing zero discriminative power.
+Note: Profile values are in TRUE ORIGINAL SCALE (₹ for amounts, years for age) — computed by merging cluster labels back to clean_categorical.csv, completely bypassing the StandardScaler / Yeo-Johnson inverse-transform chain.
+============================================================
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_profiles_REAL.csv' — values in TRUE original units.
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_interpretation.txt'.
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.pipeline |   PIPELINE COMPLETE -- 74.2s
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline |        BANK TRANSACTIONS -- CLUSTERING PIPELINE           
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | Input       : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean.csv
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | Categorical : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean_categorical.csv
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | Output      : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | -- STEP 1 / 4 : LOAD & PREPARE DATA -----------------------
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
+2026-06-16 15:42:21 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'month_sin', 'month_cos', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized']
+2026-06-16 15:42:21 | INFO     | src.stage2_Clustering.prepare | Dropped 'customer_freq_normalized' from clustering (variance=0.000000, near-zero after KYC drop)
+2026-06-16 15:42:21 | INFO     | src.stage2_Clustering.prepare | Assessing clustering tendency (Hopkins statistic)...
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare |   Hopkins statistic: 0.9946
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare |   [OK] Data exhibits significant clustering tendency (H > 0.75)
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare | Loading original-scale data from C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean_categorical.csv...
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare |   Categorical shape: (699261, 12)
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 3 features, sample size = 10000
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.pipeline | -- STEP 2 / 4 : EVALUATE OPTIMAL K ------------------------
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate | Elbow detected at K=None
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate | K-evaluation summary:
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=2  |  WCSS=1,437,917.5  |  Silhouette=0.2802
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=3  |  WCSS=1,170,495.1  |  Silhouette=0.2781
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=4  |  WCSS=1,017,590.7  |  Silhouette=0.2566
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=5  |  WCSS=883,689.5  |  Silhouette=0.2666
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=6  |  WCSS=787,671.3  |  Silhouette=0.2740
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=7  |  WCSS=709,607.4  |  Silhouette=0.2770
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 2 (highest Silhouette in range 2..5: 0.2802)
+2026-06-16 15:42:53 | WARNING  | src.stage2_Clustering.evaluate | [!] Silhouette = 0.2802 < 0.50 -- MODERATE cluster overlap. Segments are distinguishable but boundaries are not crisp.
+2026-06-16 15:42:54 | INFO     | src.stage2_Clustering.evaluate | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\optimal_k_evaluation.png'.
+2026-06-16 15:42:54 | INFO     | src.stage2_Clustering.pipeline | -- STEP 3 / 4 : APPLY CLUSTERING --------------------------
+2026-06-16 15:42:54 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=2 on full dataset...
+2026-06-16 15:42:55 | INFO     | src.stage2_Clustering.cluster | Generating Dendrogram (Ward Linkage)...
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dendrogram_ward.png'. Cut-line at y=57.1 for K=2.
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster | DBSCAN: computing k-distance graph for empirical eps...
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |   k-distance knee at index 188, eps = 0.5653
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dbscan_k_distance_plot.png'.
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster | DBSCAN Results (eps=0.5653, min_samples=6):
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |   Clusters found : 7
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |   Noise points   : 107 / 10000 (1.1%)
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 0: 1646 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 1: 5369 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 2: 2199 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 3: 470 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 4: 198 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 5: 6 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 6: 5 points
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.cluster |   DBSCAN Silhouette (excl. noise): 0.1876
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.cluster |   K-Means Silhouette:              0.2802
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.cluster |   -> K-Means produces tighter clusters.
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.pipeline | -- STEP 4 / 4 : PROFILE & EXPORT --------------------------
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | ==========================================
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | ==========================================
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | Using index-based merge with categorical data.
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | 
+                age_mean  age_median  age_std  age_min  age_max  cust_account_balance_mean  cust_account_balance_median  cust_account_balance_std  cust_account_balance_min  cust_account_balance_max  transaction_amount_inr_mean  transaction_amount_inr_median  transaction_amount_inr_std  transaction_amount_inr_min  transaction_amount_inr_max  Customer_Count  Pct_of_Total
+Cluster_Labels                                                                                                                                                                                                                                                                                                                                                                     
+0                  35.19        33.0     9.59        2       89                  198216.55                     44535.60                1147408.69                       0.0              1.150355e+08                      2578.88                         1000.0                     8950.37                         0.0                  1560034.99          342416          49.0
+1                  26.41        25.0     4.88        0       89                   16272.05                      6329.43                  42833.15                       0.0              7.004728e+06                       375.53                          199.0                      738.20                         0.0                    64351.00          356845          51.0
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | 
+(Normalized-space cluster centroids for reference:)
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | 
+                age_ordinal_normalized  cust_account_balance_normalized  transaction_amount_inr_normalized
+Cluster_Labels                                                                                            
+0                               0.5697                           0.5617                             0.5860
+1                              -0.5467                          -0.5390                            -0.5623
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | 
 ============================================================
 CLUSTER BUSINESS PROFILES -- DETAILED REPORT
+(Values in TRUE original units)
 ============================================================
 
-Cluster 0: "High-Value Established Customers" (Nasabah Mapan Bersaldo Tinggi)
+Cluster 0
 ------------------------------------------------------------
-  Population  : 347,584 customers
-  age_ordinal                             : +0.56
-  cust_account_balance                    : +0.55
-  transaction_amount_inr                  : +0.58
-  customer_freq                           : +0.00
+  Population  : 342,416 customers (49.0% of total)
+  age                                : mean=       35.19  median=       33.00  std=      9.59
+  cust_account_balance               : mean=INR   198,216.55  median=INR    44,535.60  std=INR 1,147,408.69
+  transaction_amount_inr             : mean=INR     2,578.88  median=INR     1,000.00  std=INR   8,950.37
 
-  Description : Segmen ini diisi oleh nasabah dewasa dengan umur di atas rata-rata. Mereka memiliki Saldo Akun yang sangat kuat dan terbiasa melakukan transaksi dengan nominal yang paling besar.
-  Actionable  : Ini adalah nasabah premium bank. Bank bisa memprioritaskan penawaran produk Wealth Management, investasi, deposito bunga tinggi, atau kartu kredit premium kepada segmen ini untuk memaksimalkan Customer Lifetime Value (CLV).
-
-Cluster 1: "Youth / Entry-Level Segment" (Gen-Z & Pelajar)
+Cluster 1
 ------------------------------------------------------------
-  Population  : 351,677 customers
-  age_ordinal                             : -0.56
-  cust_account_balance                    : -0.55
-  transaction_amount_inr                  : -0.57
-  customer_freq                           : +0.00
-
-  Description : Segmen nasabah yang berumur sangat muda atau paling jauh di bawah rata-rata. Sesuai dengan usianya, saldo tabungan mereka tergolong rendah dan nominal transaksi harian mereka juga bernilai kecil.
-  Actionable  : Pendekatan bisnis yang cocok untuk segmen mahasiswa/first-jobber ini adalah menawarkan promo cashback merchant lifestyle (F&B, hiburan), integrasi e-wallet, atau tabungan bebas biaya admin untuk mengakuisisi loyalitas mereka sejak dini sebelum mereka memiliki kapabilitas finansial yang lebih besar di masa depan.
+  Population  : 356,845 customers (51.0% of total)
+  age                                : mean=       26.41  median=       25.00  std=      4.88
+  cust_account_balance               : mean=INR    16,272.05  median=INR     6,329.43  std=INR  42,833.15
+  transaction_amount_inr             : mean=INR       375.53  median=INR       199.00  std=INR     738.20
 
 ============================================================
-Note: customer_freq is uniformly 0.0 across all clusters because almost all customers recorded only 1 transaction in the dataset, so frequency does not differentiate clusters.
+QUALITY ASSESSMENT
 ============================================================
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_profiles_REAL.csv' for the final report.
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_interpretation.txt' for the final report.
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.pipeline |   PIPELINE COMPLETE -- 26.2s
-2026-05-07 13:35:10 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-07 13:35:51 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-07 13:35:51 | INFO     | src.stage2_Clustering.pipeline |        BANK TRANSACTIONS -- CLUSTERING PIPELINE           
-2026-05-07 13:35:51 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-07 13:35:51 | INFO     | src.stage2_Clustering.pipeline | Input  : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean.csv
-2026-05-07 13:35:51 | INFO     | src.stage2_Clustering.pipeline | Output : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering
-2026-05-07 13:35:51 | INFO     | src.stage2_Clustering.pipeline | -- STEP 1 / 4 : LOAD & PREPARE DATA -----------------------
-2026-05-07 13:35:51 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
-2026-05-07 13:35:51 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized', 'transaction_month_normalized']
-2026-05-07 13:35:52 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 4 features, sample size = 10000
-2026-05-07 13:35:52 | INFO     | src.stage2_Clustering.pipeline | -- STEP 2 / 4 : EVALUATE OPTIMAL K ------------------------
-2026-05-07 13:35:52 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\optimal_k_evaluation.png'.
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate | K-evaluation summary:
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate |   K=2  |  WCSS=2,137,207.7  |  Silhouette=0.2721
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate |   K=3  |  WCSS=1,870,091.4  |  Silhouette=0.2715
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate |   K=4  |  WCSS=1,716,521.2  |  Silhouette=0.2401
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate |   K=5  |  WCSS=1,581,013.0  |  Silhouette=0.2538
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate |   K=6  |  WCSS=1,484,194.2  |  Silhouette=0.2580
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate |   K=7  |  WCSS=793,640.2  |  Silhouette=0.2767
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 3 (highest Silhouette in practical range 3..5: 0.2715)
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.pipeline | -- STEP 3 / 4 : APPLY CLUSTERING --------------------------
-2026-05-07 13:36:20 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=3 on full dataset...
-2026-05-07 13:36:21 | INFO     | src.stage2_Clustering.cluster | Generating Dendrograms (Ward Linkage)...
-2026-05-07 13:36:29 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dendrogram_ward.png'.
-2026-05-07 13:36:29 | INFO     | src.stage2_Clustering.cluster | Applying DBSCAN to identify branch-level anomalies/noise...
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.cluster | DBSCAN found 307 noise/outlier points out of 10000 sampled records.
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.pipeline | -- STEP 4 / 4 : PROFILE & EXPORT --------------------------
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.profile | 
-                age_ordinal  ...                           Persona
-Cluster_Labels               ...                                  
-0                      0.60  ...  High-Value Established Customers
-1                     -1.49  ...       Youth / Entry-Level Segment
-2                      0.25  ...             Low-Value Mass Market
-
-[3 rows x 6 columns]
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.profile | 
-============================================================
-CLUSTER BUSINESS PROFILES -- DETAILED REPORT
-============================================================
-
-Cluster 0: "High-Value Established Customers" (Nasabah Mapan Bersaldo Tinggi)
-------------------------------------------------------------
-  Population  : 260,931 customers
-  age_ordinal                             : +0.60
-  cust_account_balance                    : +0.75
-  transaction_amount_inr                  : +0.76
-  customer_freq                           : +0.00
-
-  Description : Segmen ini diisi oleh nasabah dewasa dengan umur di atas rata-rata. Mereka memiliki Saldo Akun yang sangat kuat dan terbiasa melakukan transaksi dengan nominal yang paling besar.
-  Actionable  : Ini adalah nasabah premium bank. Bank bisa memprioritaskan penawaran produk Wealth Management, investasi, deposito bunga tinggi, atau kartu kredit premium kepada segmen ini untuk memaksimalkan Customer Lifetime Value (CLV).
-
-Cluster 1: "Youth / Entry-Level Segment" (Gen-Z & Pelajar)
-------------------------------------------------------------
-  Population  : 153,079 customers
-  age_ordinal                             : -1.49
-  cust_account_balance                    : -0.40
-  transaction_amount_inr                  : -0.40
-  customer_freq                           : +0.00
-
-  Description : Segmen nasabah yang berumur sangat muda atau paling jauh di bawah rata-rata. Sesuai dengan usianya, saldo tabungan mereka tergolong rendah dan nominal transaksi harian mereka juga bernilai kecil.
-  Actionable  : Pendekatan bisnis yang cocok untuk segmen mahasiswa/first-jobber ini adalah menawarkan promo cashback merchant lifestyle (F&B, hiburan), integrasi e-wallet, atau tabungan bebas biaya admin untuk mengakuisisi loyalitas mereka sejak dini sebelum mereka memiliki kapabilitas finansial yang lebih besar di masa depan.
-
-Cluster 2: "Low-Value Mass Market" (Nasabah Massal Pasif)
-------------------------------------------------------------
-  Population  : 285,251 customers
-  age_ordinal                             : +0.25
-  cust_account_balance                    : -0.47
-  transaction_amount_inr                  : -0.48
-  customer_freq                           : +0.00
-
-  Description : Mayoritas nasabah bank berada di klaster ini. Umur mereka standar/sedikit di atas rata-rata, namun saldo akun mereka cenderung sangat minim dan nominal transaksi mereka paling rendah.
-  Actionable  : Segmen massal ini kemungkinan menggunakan rekening hanya sebagai jalur lewat dana (misal: menerima gaji lalu langsung ditarik habis). Bank perlu mengedukasi segmen ini untuk mulai menabung, mengadakan program undian berdasarkan saldo mengendap, atau menawarkan pinjaman tunai / paylater mikro jika mereka membutuhkan likuiditas cepat.
+  Hopkins statistic : 0.9946
+    -> Data has significant clustering tendency.
+  Silhouette score  : 0.2802
+    -> Moderate cluster separation -- boundaries are fuzzy but distinguishable.
 
 ============================================================
-Note: customer_freq is uniformly 0.0 across all clusters because almost all customers recorded only 1 transaction in the dataset, so frequency does not differentiate clusters.
+Note: 'customer_freq' was EXCLUDED from clustering features because it is near-constant (99.75% = 1) after the KYC drop in Stage 1, contributing zero discriminative power.
+Note: Profile values are in TRUE ORIGINAL SCALE (INR  for amounts, years for age) -- computed by merging cluster labels back to clean_categorical.csv, completely bypassing the StandardScaler / Yeo-Johnson inverse-transform chain.
 ============================================================
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_profiles_REAL.csv' for the final report.
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_interpretation.txt' for the final report.
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.pipeline |   PIPELINE COMPLETE -- 39.1s
-2026-05-07 13:36:30 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-12 19:31:52 | INFO     | __main__ | ╔══════════════════════════════════════════════════════════╗
-2026-05-12 19:31:52 | INFO     | __main__ | ║          BANK TRANSACTIONS DATA MINING PROJECT           ║
-2026-05-12 19:31:52 | INFO     | __main__ | ╚══════════════════════════════════════════════════════════╝
-2026-05-12 19:31:52 | INFO     | __main__ | 🚀 STAGE 1: Starting ETL Pipeline...
-2026-05-12 19:31:52 | INFO     | src.stage1_ETL.pipeline | ╔══════════════════════════════════════════════════════════╗
-2026-05-12 19:31:52 | INFO     | src.stage1_ETL.pipeline | ║          BANK TRANSACTIONS — ETL PIPELINE                ║
-2026-05-12 19:31:52 | INFO     | src.stage1_ETL.pipeline | ╚══════════════════════════════════════════════════════════╝
-2026-05-12 19:31:52 | INFO     | src.stage1_ETL.pipeline | Input  : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/raw/bank_transactions.csv
-2026-05-12 19:31:52 | INFO     | src.stage1_ETL.pipeline | Output : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean.csv
-2026-05-12 19:31:52 | INFO     | src.stage1_ETL.pipeline | ── STEP 1 / 3 : EXTRACT ────────────────────────────────────
-2026-05-12 19:31:52 | INFO     | src.stage1_ETL.extract | Loading raw data from: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/raw/bank_transactions.csv
-2026-05-12 19:31:53 | INFO     | src.stage1_ETL.extract | Loaded 1,048,567 rows × 9 columns
-2026-05-12 19:31:53 | INFO     | src.stage1_ETL.extract | Computing customer stats on raw data (before any drops)
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.extract |   Unique customers: 884,265
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.extract |   customer_freq — min: 1, max: 6, mean: 1.19
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.pipeline | ── STEP 2 / 3 : TRANSFORM ──────────────────────────────────
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.transform | ============================================================
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.transform | START TRANSFORM
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.transform | ============================================================
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.transform | [Dedup] Removed 0 duplicate rows — 1,048,567 remaining
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.transform | [Columns] Renamed 9 columns: {'TransactionID': 'transaction_id', 'CustomerID': 'customer_id', 'CustomerDOB': 'customer_dob', 'CustGender': 'cust_gender', 'CustLocation': 'cust_location', 'CustAccountBalance': 'cust_account_balance', 'TransactionDate': 'transaction_date', 'TransactionTime': 'transaction_time', 'TransactionAmount (INR)': 'transaction_amount_inr'}
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.transform | [Missing] Columns with nulls:
-customer_dob            3397
-cust_gender             1100
-cust_location            151
-cust_account_balance    2369
-2026-05-12 19:31:54 | INFO     | src.stage1_ETL.transform | [Missing] Dropped 6,953 rows with nulls — 1,041,614 remaining
-2026-05-12 19:32:15 | INFO     | src.stage1_ETL.transform | [Types] Fixed 117,080 future DOB values (2-digit year artifact)
-2026-05-12 19:32:16 | INFO     | src.stage1_ETL.transform | [Types] Invalid TransactionTime values: 0
-2026-05-12 19:33:23 | INFO     | src.stage1_ETL.transform | [Types] Conversion complete
-2026-05-12 19:33:23 | INFO     | src.stage1_ETL.transform | [Unique] transaction_id: unique
-2026-05-12 19:33:23 | INFO     | src.stage1_ETL.transform | [Unique] Unique customers: 879,358 / 1,041,614 rows
-2026-05-12 19:33:25 | WARNING  | src.stage1_ETL.transform | [KYC] 140,711 customers with inconsistent records → 301,715 rows removed (29.0% of data)
-2026-05-12 19:33:25 | WARNING  | src.stage1_ETL.transform | [KYC] Reason: DOB/gender are KYC fields — imputation not permitted
-2026-05-12 19:33:25 | WARNING  | src.stage1_ETL.transform | [KYC] Mining conclusions reflect customers with verified identity only
-2026-05-12 19:33:26 | INFO     | src.stage1_ETL.transform | [KYC] Remaining: 739,899 rows
-2026-05-12 19:33:26 | INFO     | src.stage1_ETL.transform | [Gender] Filtered to ['M', 'F'] — removed 1 rows
-2026-05-12 19:33:26 | INFO     | src.stage1_ETL.transform | [Gender] Distribution:
-cust_gender
-M    540772
-F    199126
-2026-05-12 19:33:26 | INFO     | src.stage1_ETL.transform | [Location] Merged 'NEW DELHI' → 'DELHI'
-2026-05-12 19:33:26 | INFO     | src.stage1_ETL.transform | [Location] Top 5 after merge:
-cust_location
-DELHI        109558
-MUMBAI        72329
-BANGALORE     57729
-GURGAON       52606
-NOIDA         23200
-2026-05-12 19:33:26 | INFO     | src.stage1_ETL.transform | [Age] Unrealistic ages (<0 or >100): 40,637 — removed
-2026-05-12 19:33:26 | INFO     | src.stage1_ETL.transform | [Age] Stats — min:0, max:89, mean:30.7
-2026-05-12 19:33:26 | INFO     | src.stage1_ETL.transform | [Temporal] Added: transaction_day_of_week, transaction_month, is_weekend, transaction_time_category
-2026-05-12 19:33:27 | INFO     | src.stage1_ETL.transform | [Stats] Merged customer stats — shape: (699261, 18)
-2026-05-12 19:33:27 | INFO     | src.stage1_ETL.transform | [Stats] customer_freq — mean: 1.00, max: 3
-2026-05-12 19:33:27 | INFO     | src.stage1_ETL.transform | [Encode] Age groups:
-age_category
-<18        1337
-18-24    155992
-25-34    375709
-35-44    114736
-45-54     33627
-55-64     12409
-65+        5451
-2026-05-12 19:33:28 | INFO     | src.stage1_ETL.transform | [Encode] Location groups (top 15 + OTHER):
-location_grouped
-OTHER          278825
-DELHI          101605
-MUMBAI          69208
-BANGALORE       55119
-GURGAON         50362
-NOIDA           22512
-CHENNAI         19571
-PUNE            17132
-HYDERABAD       15541
-THANE           14861
-KOLKATA         13419
-GHAZIABAD       10404
-NAVI MUMBAI      8558
-AHMEDABAD        8019
-FARIDABAD        7564
-JAIPUR           6561
-2026-05-12 19:33:28 | INFO     | src.stage1_ETL.transform | [OHE] Shape after encoding + drop: (699261, 28)
-2026-05-12 19:33:28 | INFO     | src.stage1_ETL.transform | [OHE] Columns: ['customer_id', 'cust_account_balance', 'transaction_amount_inr', 'transaction_month', 'is_weekend', 'customer_freq', 'age_ordinal', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE']
-2026-05-12 19:33:31 | INFO     | src.stage1_ETL.transform | [Norm] Yeo-Johnson applied to: ['cust_account_balance', 'transaction_amount_inr', 'customer_freq', 'age_ordinal', 'transaction_month']
-2026-05-12 19:33:31 | INFO     | src.stage1_ETL.transform | [Corr] Dropped correlated features: []
-2026-05-12 19:33:31 | INFO     | src.stage1_ETL.transform | ============================================================
-2026-05-12 19:33:31 | INFO     | src.stage1_ETL.transform | TRANSFORM COMPLETE — final shape: (699261, 28)
-2026-05-12 19:33:31 | INFO     | src.stage1_ETL.transform | ============================================================
-2026-05-12 19:33:31 | INFO     | src.stage1_ETL.pipeline | ── STEP 3 / 3 : LOAD ───────────────────────────────────────
-2026-05-12 19:33:31 | INFO     | src.stage1_ETL.load | [Load] Output path: /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean.csv
-2026-05-12 19:33:31 | INFO     | src.stage1_ETL.load | [Validate] All checks passed ✓
-2026-05-12 19:33:38 | INFO     | src.stage1_ETL.load | [Load] Exported 699,261 rows × 28 columns (92.7 MB)
-2026-05-12 19:33:38 | INFO     | src.stage1_ETL.load | [Load] Columns: ['customer_id', 'is_weekend', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized', 'transaction_month_normalized']
-2026-05-12 19:33:38 | INFO     | src.stage1_ETL.pipeline | ╔══════════════════════════════════════════════════════════╗
-2026-05-12 19:33:38 | INFO     | src.stage1_ETL.pipeline | ║  PIPELINE COMPLETE — 105.5s                              ║
-2026-05-12 19:33:38 | INFO     | src.stage1_ETL.pipeline | ╚══════════════════════════════════════════════════════════╝
-2026-05-12 19:33:38 | INFO     | __main__ | 🚀 STAGE 2: Starting Clustering Pipeline...
-2026-05-12 19:33:38 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-12 19:33:38 | INFO     | src.stage2_Clustering.pipeline |        BANK TRANSACTIONS -- CLUSTERING PIPELINE           
-2026-05-12 19:33:38 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-12 19:33:38 | INFO     | src.stage2_Clustering.pipeline | Input  : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage1_ETL/clean.csv
-2026-05-12 19:33:38 | INFO     | src.stage2_Clustering.pipeline | Output : /home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage2_Clustering
-2026-05-12 19:33:38 | INFO     | src.stage2_Clustering.pipeline | -- STEP 1 / 4 : LOAD & PREPARE DATA -----------------------
-2026-05-12 19:33:38 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
-2026-05-12 19:33:39 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized', 'transaction_month_normalized']
-2026-05-12 19:33:39 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 4 features, sample size = 10000
-2026-05-12 19:33:39 | INFO     | src.stage2_Clustering.pipeline | -- STEP 2 / 4 : EVALUATE OPTIMAL K ------------------------
-2026-05-12 19:33:39 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate | Saved '/home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage2_Clustering/optimal_k_evaluation.png'.
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate | K-evaluation summary:
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate |   K=2  |  WCSS=2,137,207.7  |  Silhouette=0.2721
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate |   K=3  |  WCSS=1,870,091.4  |  Silhouette=0.2715
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate |   K=4  |  WCSS=1,716,521.2  |  Silhouette=0.2401
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate |   K=5  |  WCSS=1,581,013.0  |  Silhouette=0.2538
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate |   K=6  |  WCSS=1,484,194.2  |  Silhouette=0.2580
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate |   K=7  |  WCSS=793,640.2  |  Silhouette=0.2767
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 3 (highest Silhouette in practical range 3..5: 0.2715)
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.pipeline | -- STEP 3 / 4 : APPLY CLUSTERING --------------------------
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=3 on full dataset...
-2026-05-12 19:33:50 | INFO     | src.stage2_Clustering.cluster | Generating Dendrograms (Ward Linkage)...
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.cluster | Saved '/home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage2_Clustering/dendrogram_ward.png'.
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.cluster | Applying DBSCAN to identify branch-level anomalies/noise...
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.cluster | DBSCAN found 307 noise/outlier points out of 10000 sampled records.
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.pipeline | -- STEP 4 / 4 : PROFILE & EXPORT --------------------------
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.profile | ==========================================
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.profile | 
-                age_ordinal  cust_account_balance  ...  Customer_Count                           Persona
-Cluster_Labels                                     ...                                                  
-0                      0.60                  0.75  ...          260931  High-Value Established Customers
-1                     -1.49                 -0.40  ...          153079       Youth / Entry-Level Segment
-2                      0.25                 -0.47  ...          285251             Low-Value Mass Market
-
-[3 rows x 6 columns]
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.profile | 
-============================================================
-CLUSTER BUSINESS PROFILES -- DETAILED REPORT
-============================================================
-
-Cluster 0: "High-Value Established Customers" (Established High-Balance Customers)
-------------------------------------------------------------
-  Population  : 260,931 customers
-  age_ordinal                             : +0.60
-  cust_account_balance                    : +0.75
-  transaction_amount_inr                  : +0.76
-  customer_freq                           : +0.00
-
-  Description : This segment consists of mature customers with above-average ages. They have very strong account balances and are accustomed to making transactions with the largest denominations.
-  Actionable  : These are the bank's premium customers. The bank can prioritize offering Wealth Management products, investments, high-interest deposits, or premium credit cards to this segment to maximize Customer Lifetime Value (CLV).
-
-Cluster 1: "Youth / Entry-Level Segment" (Gen-Z & Students)
-------------------------------------------------------------
-  Population  : 153,079 customers
-  age_ordinal                             : -1.49
-  cust_account_balance                    : -0.40
-  transaction_amount_inr                  : -0.40
-  customer_freq                           : +0.00
-
-  Description : This segment consists of very young customers, significantly below the average age. Consistent with their age, their savings balances are relatively low, and their daily transaction amounts are also small.
-  Actionable  : A suitable business approach for this student/first-jobber segment is offering lifestyle merchant cashback promos (F&B, entertainment), e-wallet integration, or admin-fee-free savings accounts to acquire their loyalty early before they gain greater financial capabilities in the future.
-
-Cluster 2: "Low-Value Mass Market" (Passive Mass Market Customers)
-------------------------------------------------------------
-  Population  : 285,251 customers
-  age_ordinal                             : +0.25
-  cust_account_balance                    : -0.47
-  transaction_amount_inr                  : -0.48
-  customer_freq                           : +0.00
-
-  Description : The majority of the bank's customers fall into this cluster. Their age is standard or slightly above average, but their account balances tend to be very minimal and their transaction amounts are the lowest.
-  Actionable  : This mass segment likely uses their accounts only as a transit for funds (e.g., receiving salary and then immediately withdrawing it all). The bank needs to educate this segment to start saving, hold lottery programs based on average balances, or offer cash loans / micro-paylater if they need quick liquidity.
-
-============================================================
-Note: customer_freq is uniformly 0.0 across all clusters because almost all customers recorded only 1 transaction in the dataset, so frequency does not differentiate clusters.
-============================================================
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.profile | Exported '/home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage2_Clustering/cluster_business_profiles_REAL.csv' for the final report.
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.profile | Exported '/home/kenny/Documents/Cawu5/Data_Mining/Project_Fix/data/stage2_Clustering/cluster_business_interpretation.txt' for the final report.
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.pipeline |   PIPELINE COMPLETE -- 16.3s
-2026-05-12 19:33:54 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
-2026-05-12 19:33:54 | INFO     | __main__ | ╔══════════════════════════════════════════════════════════╗
-2026-05-12 19:33:54 | INFO     | __main__ | ║  ✅ ALL STAGES COMPLETE — Total Time: 121.8s              ║
-2026-05-12 19:33:54 | INFO     | __main__ | ╚══════════════════════════════════════════════════════════╝
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_profiles_REAL.csv' -- values in TRUE original units.
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_interpretation.txt'.
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.pipeline |   PIPELINE COMPLETE -- 37.2s
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
