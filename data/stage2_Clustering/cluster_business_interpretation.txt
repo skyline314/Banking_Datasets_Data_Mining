@@ -1,40 +1,31 @@
 ============================================================
 CLUSTER BUSINESS PROFILES -- DETAILED REPORT
+(Values in TRUE original units)
 ============================================================
 
-Cluster 0: "High-Value Established Customers" (Established High-Balance Customers)
+Cluster 0
 ------------------------------------------------------------
-  Population  : 260,931 customers
-  age_ordinal                             : +0.60
-  cust_account_balance                    : +0.75
-  transaction_amount_inr                  : +0.76
-  customer_freq                           : +0.00
+  Population  : 342,416 customers (49.0% of total)
+  age                                : mean=       35.19  median=       33.00  std=      9.59
+  cust_account_balance               : mean=INR   198,216.55  median=INR    44,535.60  std=INR 1,147,408.69
+  transaction_amount_inr             : mean=INR     2,578.88  median=INR     1,000.00  std=INR   8,950.37
 
-  Description : This segment consists of mature customers with above-average ages. They have very strong account balances and are accustomed to making transactions with the largest denominations.
-  Actionable  : These are the bank's premium customers. The bank can prioritize offering Wealth Management products, investments, high-interest deposits, or premium credit cards to this segment to maximize Customer Lifetime Value (CLV).
-
-Cluster 1: "Youth / Entry-Level Segment" (Gen-Z & Students)
+Cluster 1
 ------------------------------------------------------------
-  Population  : 153,079 customers
-  age_ordinal                             : -1.49
-  cust_account_balance                    : -0.40
-  transaction_amount_inr                  : -0.40
-  customer_freq                           : +0.00
-
-  Description : This segment consists of very young customers, significantly below the average age. Consistent with their age, their savings balances are relatively low, and their daily transaction amounts are also small.
-  Actionable  : A suitable business approach for this student/first-jobber segment is offering lifestyle merchant cashback promos (F&B, entertainment), e-wallet integration, or admin-fee-free savings accounts to acquire their loyalty early before they gain greater financial capabilities in the future.
-
-Cluster 2: "Low-Value Mass Market" (Passive Mass Market Customers)
-------------------------------------------------------------
-  Population  : 285,251 customers
-  age_ordinal                             : +0.25
-  cust_account_balance                    : -0.47
-  transaction_amount_inr                  : -0.48
-  customer_freq                           : +0.00
-
-  Description : The majority of the bank's customers fall into this cluster. Their age is standard or slightly above average, but their account balances tend to be very minimal and their transaction amounts are the lowest.
-  Actionable  : This mass segment likely uses their accounts only as a transit for funds (e.g., receiving salary and then immediately withdrawing it all). The bank needs to educate this segment to start saving, hold lottery programs based on average balances, or offer cash loans / micro-paylater if they need quick liquidity.
+  Population  : 356,845 customers (51.0% of total)
+  age                                : mean=       26.41  median=       25.00  std=      4.88
+  cust_account_balance               : mean=INR    16,272.05  median=INR     6,329.43  std=INR  42,833.15
+  transaction_amount_inr             : mean=INR       375.53  median=INR       199.00  std=INR     738.20
 
 ============================================================
-Note: customer_freq is uniformly 0.0 across all clusters because almost all customers recorded only 1 transaction in the dataset, so frequency does not differentiate clusters.
+QUALITY ASSESSMENT
+============================================================
+  Hopkins statistic : 0.9946
+    -> Data has significant clustering tendency.
+  Silhouette score  : 0.2802
+    -> Moderate cluster separation -- boundaries are fuzzy but distinguishable.
+
+============================================================
+Note: 'customer_freq' was EXCLUDED from clustering features because it is near-constant (99.75% = 1) after the KYC drop in Stage 1, contributing zero discriminative power.
+Note: Profile values are in TRUE ORIGINAL SCALE (INR  for amounts, years for age) -- computed by merging cluster labels back to clean_categorical.csv, completely bypassing the StandardScaler / Yeo-Johnson inverse-transform chain.
 ============================================================

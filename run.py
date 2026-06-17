@@ -38,7 +38,9 @@ def run_project():
 
         # ── STAGE 2 : CLUSTERING ───────────────────────────────────────────
         log.info("🚀 STAGE 2: Starting Clustering Pipeline...")
-        clustering_success = run_clustering(config.CLUSTERING_INPUT_PATH, config.CLUSTERING_OUTPUT_DIR)
+        clustering_success = run_clustering(config.CLUSTERING_INPUT_PATH,
+                                              config.CLUSTERING_CATEGORICAL_PATH,
+                                              config.CLUSTERING_OUTPUT_DIR)
         
         if not clustering_success:
             log.error("❌ STAGE 2 FAILED. Aborting project run.")

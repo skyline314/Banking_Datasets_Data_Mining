@@ -15,8 +15,9 @@ CATEGORICAL_DATA_PATH  = ROOT_DIR / "data" / "stage1_ETL" / "clean_categorical.c
 LOG_DIR             = ROOT_DIR / "logs"
 
 # ── Stage 2: Clustering ──────────────────────────────────────────────────────
-CLUSTERING_INPUT_PATH  = PROCESSED_DATA_PATH          # reads clean.csv from stage 1
-CLUSTERING_OUTPUT_DIR  = ROOT_DIR / "data" / "stage2_Clustering"
+CLUSTERING_INPUT_PATH       = PROCESSED_DATA_PATH     # reads clean.csv from stage 1
+CLUSTERING_CATEGORICAL_PATH = CATEGORICAL_DATA_PATH   # original-scale data for profile merging
+CLUSTERING_OUTPUT_DIR       = ROOT_DIR / "data" / "stage2_Clustering"
 
 # ── Stage 3: Association Rule Mining ─────────────────────────────────────────
 ASSOC_INPUT_PATH   = CATEGORICAL_DATA_PATH             # reads clean_categorical.csv (original-scale cleaned data)

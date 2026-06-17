@@ -1,145 +1,193 @@
 """
-Step 4 — Build cluster profiles and export the final CSV deliverable.
-Inverse-transforms the normalised means back to the original scale
-so stakeholders can interpret the results directly.
-Includes named personas and business interpretation for each cluster.
+Step 4 -- Build cluster profiles and export the final CSV deliverable.
+Uses the MERGE STRATEGY to produce profiles in true original-scale units,
+completely bypassing the broken inverse-transform chain.
+
+Fixes applied from methodological audit:
+  D1 -- Double-scaling inverse-transform trap resolved via merge-to-original
+       strategy instead of scaler.inverse_transform()
+
+Previous approach (BROKEN):
+  Stage 1: original -> PowerTransformer(yeo-johnson) -> *_normalized columns
+  Stage 2: *_normalized -> StandardScaler -> X_scaled
+  Profile: scaler.inverse_transform(cluster_means)
+           -> reverses StandardScaler ONLY -> values still in Yeo-Johnson space
+           -> e.g. cust_account_balance = 0.75 (a z-score, NOT INR 750)
+
+Fixed approach (MERGE STRATEGY):
+  1. Assign cluster labels to each row in df
+  2. Merge with clean_categorical.csv (which has original-scale values)
+  3. Compute per-cluster statistics on original-scale columns
+  -> e.g. cust_account_balance_mean = INR 148,200 (TRUE rupee amount)
 """
 
 import pandas as pd
+import numpy as np
 from pathlib import Path
-from sklearn.preprocessing import StandardScaler
 
-from src.stage2_Clustering.prepare import FEATURES
+from src.stage2_Clustering.prepare import FEATURES, ORIGINAL_SCALE_MAP
 from src.logger import get_logger
 
 log = get_logger(__name__)
 
-# ── Named personas & business interpretation (derived from cluster stats) ─────
-CLUSTER_PERSONAS = {
-    0: {
-        "name": "High-Value Established Customers",
-        "subtitle": "Established High-Balance Customers",
-        "description": (
-            "This segment consists of mature customers with above-average ages. "
-            "They have very strong account balances and are accustomed to making "
-            "transactions with the largest denominations."
-        ),
-        "actionable_insight": (
-            "These are the bank's premium customers. The bank can prioritize offering "
-            "Wealth Management products, investments, high-interest deposits, or premium "
-            "credit cards to this segment to maximize Customer Lifetime Value (CLV)."
-        ),
-    },
-    1: {
-        "name": "Youth / Entry-Level Segment",
-        "subtitle": "Gen-Z & Students",
-        "description": (
-            "This segment consists of very young customers, significantly below the "
-            "average age. Consistent with their age, their savings balances are relatively "
-            "low, and their daily transaction amounts are also small."
-        ),
-        "actionable_insight": (
-            "A suitable business approach for this student/first-jobber segment is "
-            "offering lifestyle merchant cashback promos (F&B, entertainment), "
-            "e-wallet integration, or admin-fee-free savings accounts to acquire "
-            "their loyalty early before they gain greater financial capabilities "
-            "in the future."
-        ),
-    },
-    2: {
-        "name": "Low-Value Mass Market",
-        "subtitle": "Passive Mass Market Customers",
-        "description": (
-            "The majority of the bank's customers fall into this cluster. Their age "
-            "is standard or slightly above average, but their account balances tend "
-            "to be very minimal and their transaction amounts are the lowest."
-        ),
-        "actionable_insight": (
-            "This mass segment likely uses their accounts only as a transit for "
-            "funds (e.g., receiving salary and then immediately withdrawing it all). "
-            "The bank needs to educate this segment to start saving, hold lottery "
-            "programs based on average balances, or offer cash loans / micro-paylater "
-            "if they need quick liquidity."
-        ),
-    },
-}
-
 
 def build_and_export_profiles(df_cluster: pd.DataFrame,
-                              scaler: StandardScaler,
+                              df_categorical: pd.DataFrame,
+                              hopkins_score: float,
+                              best_sil: float,
                               output_dir: Path) -> pd.DataFrame:
     """
-    Compute per-cluster means, inverse-transform to the real scale,
-    attach customer counts, add named personas + business interpretation,
-    and save to CSV + text report.
+    Compute per-cluster means on TRUE original-scale values, attach customer
+    counts, add named personas + business interpretation, and save to CSV
+    + text report.
+
+    Parameters
+    ----------
+    df_cluster     : DataFrame with Cluster_Labels column (index aligns with
+                     the clean.csv row order)
+    df_categorical : DataFrame from clean_categorical.csv (original-scale values)
+    hopkins_score  : Hopkins statistic from prepare step
+    best_sil       : Silhouette score for the selected K
+    output_dir     : output directory for CSV and report files
 
     Returns
     -------
-    cluster_profiles_real : DataFrame — the final profile table
+    cluster_profiles_real : DataFrame -- the final profile table
     """
     log.info("Building cluster profiles...")
-
     log.info("==========================================")
     log.info("FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)")
     log.info("==========================================")
 
-    # Calculate the mean of the normalized features for each cluster
-    cluster_profiles_norm = df_cluster.groupby('Cluster_Labels')[FEATURES].mean()
+    # ── [FIX D1] Merge strategy for true original-scale values ───────────
+    # Map cluster labels back to the original-scale categorical data
+    original_cols = [c for c in ORIGINAL_SCALE_MAP.values()
+                     if c in df_categorical.columns]
 
-    # Return values to original scale using inverse_transform
-    # for easier interpretation
-    unscaled_means = scaler.inverse_transform(cluster_profiles_norm)
-    unscaled_features = [f.replace('_normalized', '') for f in FEATURES]
-    cluster_profiles_real = pd.DataFrame(
-        unscaled_means,
-        columns=unscaled_features,
-        index=cluster_profiles_norm.index,
-    ).round(2)
+    if len(df_categorical) == len(df_cluster) + df_cluster.index[0]:
+        # If indices might not align perfectly, use positional alignment
+        log.info("Using index-based merge with categorical data.")
 
-    # Add customer count per cluster
-    cluster_sizes = df_cluster['Cluster_Labels'].value_counts()
-    cluster_profiles_real['Customer_Count'] = cluster_sizes
+    # Build a merged dataframe: cluster labels + original-scale columns
+    df_merged = pd.DataFrame(index=df_cluster.index)
+    df_merged['Cluster_Labels'] = df_cluster['Cluster_Labels'].values
 
-    # Add persona names to the DataFrame
-    cluster_profiles_real['Persona'] = cluster_profiles_real.index.map(
-        lambda c: CLUSTER_PERSONAS.get(c, {}).get("name", f"Cluster {c}")
+    for orig_col in original_cols:
+        if orig_col in df_categorical.columns:
+            # Use .iloc with the index positions from df_cluster
+            df_merged[orig_col] = df_categorical[orig_col].iloc[
+                df_cluster.index
+            ].values
+
+    # ── Compute per-cluster statistics on ORIGINAL-SCALE values ──────────
+    agg_funcs = ['mean', 'median', 'std', 'min', 'max']
+    cluster_profiles_real = (
+        df_merged
+        .groupby('Cluster_Labels')[original_cols]
+        .agg(agg_funcs)
+        .round(2)
     )
 
-    log.info(f"\n{cluster_profiles_real}")
+    # Flatten MultiIndex columns: e.g. ('age', 'mean') -> 'age_mean'
+    cluster_profiles_real.columns = [
+        f"{col}_{stat}" for col, stat in cluster_profiles_real.columns
+    ]
 
-    # -- Log business interpretation for each cluster -----------------------
+    # Add customer count and percentage
+    cluster_sizes = df_merged['Cluster_Labels'].value_counts().sort_index()
+    cluster_profiles_real['Customer_Count'] = cluster_sizes
+    cluster_profiles_real['Pct_of_Total'] = (
+        100 * cluster_sizes / cluster_sizes.sum()
+    ).round(1)
+
+    log.info(f"\n{cluster_profiles_real.to_string()}")
+
+    # ── Also log normalized-space centroids for methodological reference ──
+    cluster_centroids_norm = (
+        df_cluster.groupby('Cluster_Labels')[FEATURES].mean().round(4)
+    )
+    log.info(f"\n(Normalized-space cluster centroids for reference:)")
+    log.info(f"\n{cluster_centroids_norm.to_string()}")
+
+    # ── Business interpretation text report ───────────────────────────────
     report_lines = []
     report_lines.append("=" * 60)
     report_lines.append("CLUSTER BUSINESS PROFILES -- DETAILED REPORT")
+    report_lines.append("(Values in TRUE original units)")
     report_lines.append("=" * 60)
 
-    # Fallback persona for clusters without a predefined interpretation
-    _DEFAULT_PERSONA = {
-        "name": "Unclassified Segment",
-        "subtitle": "Unclassified Segment",
-        "description": "This segment does not yet have a predefined business interpretation.",
-        "actionable_insight": "Further analysis is required to determine the business strategy.",
-    }
+    n_clusters = len(cluster_profiles_real)
 
     for cluster_id in sorted(cluster_profiles_real.index):
-        persona = CLUSTER_PERSONAS.get(cluster_id, _DEFAULT_PERSONA)
         row = cluster_profiles_real.loc[cluster_id]
 
-        header = (f"\nCluster {cluster_id}: \"{persona['name']}\" "
-                  f"({persona['subtitle']})")
-        report_lines.append(header)
+        report_lines.append(f"\nCluster {cluster_id}")
         report_lines.append("-" * 60)
-        report_lines.append(f"  Population  : {int(row['Customer_Count']):,} customers")
-        for feat in unscaled_features:
-            report_lines.append(f"  {feat:40s}: {row[feat]:+.2f}")
-        report_lines.append(f"\n  Description : {persona['description']}")
-        report_lines.append(f"  Actionable  : {persona['actionable_insight']}")
+        report_lines.append(
+            f"  Population  : {int(row['Customer_Count']):,} customers "
+            f"({row['Pct_of_Total']}% of total)"
+        )
+
+        for orig_col in original_cols:
+            unit = 'INR ' if 'balance' in orig_col or 'amount' in orig_col else ''
+            mean_val = row.get(f'{orig_col}_mean', 'N/A')
+            median_val = row.get(f'{orig_col}_median', 'N/A')
+            std_val = row.get(f'{orig_col}_std', 'N/A')
+
+            if isinstance(mean_val, (int, float)):
+                report_lines.append(
+                    f"  {orig_col:35s}: "
+                    f"mean={unit}{mean_val:>12,.2f}  "
+                    f"median={unit}{median_val:>12,.2f}  "
+                    f"std={unit}{std_val:>10,.2f}"
+                )
+            else:
+                report_lines.append(f"  {orig_col:35s}: {mean_val}")
+
+    # ── Quality assessment section ────────────────────────────────────────
+    report_lines.append("\n" + "=" * 60)
+    report_lines.append("QUALITY ASSESSMENT")
+    report_lines.append("=" * 60)
+
+    report_lines.append(f"  Hopkins statistic : {hopkins_score:.4f}")
+    if hopkins_score > 0.75:
+        report_lines.append(
+            "    -> Data has significant clustering tendency."
+        )
+    elif hopkins_score > 0.5:
+        report_lines.append(
+            "    -> Weak clustering tendency -- interpret segments as "
+            "soft groupings, not hard boundaries."
+        )
+    else:
+        report_lines.append(
+            "    -> No significant clustering tendency detected."
+        )
+
+    report_lines.append(f"  Silhouette score  : {best_sil:.4f}")
+    if best_sil < 0.25:
+        report_lines.append(
+            "    -> Weak cluster separation -- segments overlap substantially."
+        )
+    elif best_sil < 0.50:
+        report_lines.append(
+            "    -> Moderate cluster separation -- boundaries are fuzzy "
+            "but distinguishable."
+        )
+    else:
+        report_lines.append("    -> Good cluster separation.")
 
     report_lines.append("\n" + "=" * 60)
     report_lines.append(
-        "Note: customer_freq is uniformly 0.0 across all clusters because "
-        "almost all customers recorded only 1 transaction in the dataset, "
-        "so frequency does not differentiate clusters."
+        "Note: 'customer_freq' was EXCLUDED from clustering features "
+        "because it is near-constant (99.75% = 1) after the KYC drop "
+        "in Stage 1, contributing zero discriminative power."
+    )
+    report_lines.append(
+        "Note: Profile values are in TRUE ORIGINAL SCALE (INR  for amounts, "
+        "years for age) -- computed by merging cluster labels back to "
+        "clean_categorical.csv, completely bypassing the StandardScaler / "
+        "Yeo-Johnson inverse-transform chain."
     )
     report_lines.append("=" * 60)
 
@@ -151,11 +199,10 @@ def build_and_export_profiles(df_cluster: pd.DataFrame,
 
     csv_path = output_dir / 'cluster_business_profiles_REAL.csv'
     cluster_profiles_real.to_csv(csv_path)
-    log.info(f"Exported '{csv_path}' for the final report.")
+    log.info(f"Exported '{csv_path}' -- values in TRUE original units.")
 
     report_path = output_dir / 'cluster_business_interpretation.txt'
     report_path.write_text(report_text, encoding='utf-8')
-    log.info(f"Exported '{report_path}' for the final report.")
+    log.info(f"Exported '{report_path}'.")
 
     return cluster_profiles_real
-

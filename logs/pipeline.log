@@ -161,3 +161,211 @@ JAIPUR           6561
 2026-06-15 15:28:06 | INFO     | src.stage1_ETL.pipeline | ║  PIPELINE COMPLETE — 83.8s                              ║
 2026-06-15 15:28:06 | INFO     | src.stage1_ETL.pipeline | ╚══════════════════════════════════════════════════════════╝
 ═══════════════════════════════════════════════════╝
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline |        BANK TRANSACTIONS -- CLUSTERING PIPELINE           
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | Input       : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean.csv
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | Categorical : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean_categorical.csv
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | Output      : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.pipeline | -- STEP 1 / 4 : LOAD & PREPARE DATA -----------------------
+2026-06-16 15:38:24 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
+2026-06-16 15:38:28 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'month_sin', 'month_cos', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized']
+2026-06-16 15:38:28 | INFO     | src.stage2_Clustering.prepare | Dropped 'customer_freq_normalized' from clustering (variance=0.000000, near-zero after KYC drop)
+2026-06-16 15:38:28 | INFO     | src.stage2_Clustering.prepare | Assessing clustering tendency (Hopkins statistic)...
+2026-06-16 15:38:29 | INFO     | src.stage2_Clustering.prepare |   Hopkins statistic: 0.9946
+2026-06-16 15:38:29 | INFO     | src.stage2_Clustering.prepare |   ✓ Data exhibits significant clustering tendency (H > 0.75)
+2026-06-16 15:38:29 | INFO     | src.stage2_Clustering.prepare | Loading original-scale data from C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean_categorical.csv...
+2026-06-16 15:38:31 | INFO     | src.stage2_Clustering.prepare |   Categorical shape: (699261, 12)
+2026-06-16 15:38:31 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 3 features, sample size = 10000
+2026-06-16 15:38:31 | INFO     | src.stage2_Clustering.pipeline | -- STEP 2 / 4 : EVALUATE OPTIMAL K ------------------------
+2026-06-16 15:38:31 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate | Elbow detected at K=None
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate | K-evaluation summary:
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=2  |  WCSS=1,437,917.5  |  Silhouette=0.2802
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=3  |  WCSS=1,170,495.1  |  Silhouette=0.2781
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=4  |  WCSS=1,017,590.7  |  Silhouette=0.2566
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=5  |  WCSS=883,689.5  |  Silhouette=0.2666
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=6  |  WCSS=787,671.3  |  Silhouette=0.2740
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate |   K=7  |  WCSS=709,607.4  |  Silhouette=0.2770
+2026-06-16 15:39:28 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 2 (highest Silhouette in range 2..5: 0.2802)
+2026-06-16 15:39:28 | WARNING  | src.stage2_Clustering.evaluate | ⚠ Silhouette = 0.2802 < 0.50 — MODERATE cluster overlap. Segments are distinguishable but boundaries are not crisp.
+2026-06-16 15:39:30 | INFO     | src.stage2_Clustering.evaluate | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\optimal_k_evaluation.png'.
+2026-06-16 15:39:30 | INFO     | src.stage2_Clustering.pipeline | -- STEP 3 / 4 : APPLY CLUSTERING --------------------------
+2026-06-16 15:39:30 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=2 on full dataset...
+2026-06-16 15:39:32 | INFO     | src.stage2_Clustering.cluster | Generating Dendrogram (Ward Linkage)...
+2026-06-16 15:39:33 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dendrogram_ward.png'. Cut-line at y=57.1 for K=2.
+2026-06-16 15:39:33 | INFO     | src.stage2_Clustering.cluster | DBSCAN: computing k-distance graph for empirical eps...
+2026-06-16 15:39:33 | INFO     | src.stage2_Clustering.cluster |   k-distance knee at index 188, eps = 0.5653
+2026-06-16 15:39:33 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dbscan_k_distance_plot.png'.
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster | DBSCAN Results (eps=0.5653, min_samples=6):
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |   Clusters found : 7
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |   Noise points   : 107 / 10000 (1.1%)
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 0: 1646 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 1: 5369 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 2: 2199 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 3: 470 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 4: 198 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 5: 6 points
+2026-06-16 15:39:34 | INFO     | src.stage2_Clustering.cluster |     Cluster 6: 5 points
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.cluster |   DBSCAN Silhouette (excl. noise): 0.1876
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.cluster |   K-Means Silhouette:              0.2802
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.cluster |   → K-Means produces tighter clusters.
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.pipeline | -- STEP 4 / 4 : PROFILE & EXPORT --------------------------
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | ==========================================
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | ==========================================
+2026-06-16 15:39:38 | INFO     | src.stage2_Clustering.profile | Using index-based merge with categorical data.
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | 
+                age_mean  age_median  age_std  age_min  age_max  cust_account_balance_mean  cust_account_balance_median  cust_account_balance_std  cust_account_balance_min  cust_account_balance_max  transaction_amount_inr_mean  transaction_amount_inr_median  transaction_amount_inr_std  transaction_amount_inr_min  transaction_amount_inr_max  Customer_Count  Pct_of_Total
+Cluster_Labels                                                                                                                                                                                                                                                                                                                                                                     
+0                  35.19        33.0     9.59        2       89                  198216.55                     44535.60                1147408.69                       0.0              1.150355e+08                      2578.88                         1000.0                     8950.37                         0.0                  1560034.99          342416          49.0
+1                  26.41        25.0     4.88        0       89                   16272.05                      6329.43                  42833.15                       0.0              7.004728e+06                       375.53                          199.0                      738.20                         0.0                    64351.00          356845          51.0
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | 
+(Normalized-space cluster centroids for reference:)
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | 
+                age_ordinal_normalized  cust_account_balance_normalized  transaction_amount_inr_normalized
+Cluster_Labels                                                                                            
+0                               0.5697                           0.5617                             0.5860
+1                              -0.5467                          -0.5390                            -0.5623
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | 
+============================================================
+CLUSTER BUSINESS PROFILES — DETAILED REPORT
+(Values in TRUE original units)
+============================================================
+
+Cluster 0
+------------------------------------------------------------
+  Population  : 342,416 customers (49.0% of total)
+  age                                : mean=       35.19  median=       33.00  std=      9.59
+  cust_account_balance               : mean=₹  198,216.55  median=₹   44,535.60  std=₹1,147,408.69
+  transaction_amount_inr             : mean=₹    2,578.88  median=₹    1,000.00  std=₹  8,950.37
+
+Cluster 1
+------------------------------------------------------------
+  Population  : 356,845 customers (51.0% of total)
+  age                                : mean=       26.41  median=       25.00  std=      4.88
+  cust_account_balance               : mean=₹   16,272.05  median=₹    6,329.43  std=₹ 42,833.15
+  transaction_amount_inr             : mean=₹      375.53  median=₹      199.00  std=₹    738.20
+
+============================================================
+QUALITY ASSESSMENT
+============================================================
+  Hopkins statistic : 0.9946
+    → Data has significant clustering tendency.
+  Silhouette score  : 0.2802
+    → Moderate cluster separation — boundaries are fuzzy but distinguishable.
+
+============================================================
+Note: 'customer_freq' was EXCLUDED from clustering features because it is near-constant (99.75% = 1) after the KYC drop in Stage 1, contributing zero discriminative power.
+Note: Profile values are in TRUE ORIGINAL SCALE (₹ for amounts, years for age) — computed by merging cluster labels back to clean_categorical.csv, completely bypassing the StandardScaler / Yeo-Johnson inverse-transform chain.
+============================================================
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_profiles_REAL.csv' — values in TRUE original units.
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_interpretation.txt'.
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.pipeline |   PIPELINE COMPLETE -- 74.2s
+2026-06-16 15:39:39 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline |        BANK TRANSACTIONS -- CLUSTERING PIPELINE           
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | Input       : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean.csv
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | Categorical : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean_categorical.csv
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | Output      : C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.pipeline | -- STEP 1 / 4 : LOAD & PREPARE DATA -----------------------
+2026-06-16 15:42:20 | INFO     | src.stage2_Clustering.prepare | Loading clean dataset...
+2026-06-16 15:42:21 | INFO     | src.stage2_Clustering.prepare | COLUMNS IN FILE: ['customer_id', 'is_weekend', 'gender_encoded', 'month_sin', 'month_cos', 'time_Early Morning (04-08)', 'time_Morning (08-12)', 'time_Midday/Afternoon (12-16)', 'time_Evening (16-20)', 'time_Night (20-00)', 'loc_BANGALORE', 'loc_CHENNAI', 'loc_DELHI', 'loc_FARIDABAD', 'loc_GHAZIABAD', 'loc_GURGAON', 'loc_HYDERABAD', 'loc_JAIPUR', 'loc_KOLKATA', 'loc_MUMBAI', 'loc_NAVI MUMBAI', 'loc_NOIDA', 'loc_OTHER', 'loc_PUNE', 'loc_THANE', 'cust_account_balance_normalized', 'transaction_amount_inr_normalized', 'customer_freq_normalized', 'age_ordinal_normalized']
+2026-06-16 15:42:21 | INFO     | src.stage2_Clustering.prepare | Dropped 'customer_freq_normalized' from clustering (variance=0.000000, near-zero after KYC drop)
+2026-06-16 15:42:21 | INFO     | src.stage2_Clustering.prepare | Assessing clustering tendency (Hopkins statistic)...
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare |   Hopkins statistic: 0.9946
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare |   [OK] Data exhibits significant clustering tendency (H > 0.75)
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare | Loading original-scale data from C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage1_ETL\clean_categorical.csv...
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare |   Categorical shape: (699261, 12)
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.prepare | Prepared 699261 rows, 3 features, sample size = 10000
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.pipeline | -- STEP 2 / 4 : EVALUATE OPTIMAL K ------------------------
+2026-06-16 15:42:22 | INFO     | src.stage2_Clustering.evaluate | Calculating Elbow Method and Silhouette Scores (on sample)...
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate | Elbow detected at K=None
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate | K-evaluation summary:
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=2  |  WCSS=1,437,917.5  |  Silhouette=0.2802
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=3  |  WCSS=1,170,495.1  |  Silhouette=0.2781
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=4  |  WCSS=1,017,590.7  |  Silhouette=0.2566
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=5  |  WCSS=883,689.5  |  Silhouette=0.2666
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=6  |  WCSS=787,671.3  |  Silhouette=0.2740
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate |   K=7  |  WCSS=709,607.4  |  Silhouette=0.2770
+2026-06-16 15:42:53 | INFO     | src.stage2_Clustering.evaluate | Selected OPTIMAL_K = 2 (highest Silhouette in range 2..5: 0.2802)
+2026-06-16 15:42:53 | WARNING  | src.stage2_Clustering.evaluate | [!] Silhouette = 0.2802 < 0.50 -- MODERATE cluster overlap. Segments are distinguishable but boundaries are not crisp.
+2026-06-16 15:42:54 | INFO     | src.stage2_Clustering.evaluate | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\optimal_k_evaluation.png'.
+2026-06-16 15:42:54 | INFO     | src.stage2_Clustering.pipeline | -- STEP 3 / 4 : APPLY CLUSTERING --------------------------
+2026-06-16 15:42:54 | INFO     | src.stage2_Clustering.cluster | Applying K-Means with K=2 on full dataset...
+2026-06-16 15:42:55 | INFO     | src.stage2_Clustering.cluster | Generating Dendrogram (Ward Linkage)...
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dendrogram_ward.png'. Cut-line at y=57.1 for K=2.
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster | DBSCAN: computing k-distance graph for empirical eps...
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |   k-distance knee at index 188, eps = 0.5653
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster | Saved 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\dbscan_k_distance_plot.png'.
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster | DBSCAN Results (eps=0.5653, min_samples=6):
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |   Clusters found : 7
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |   Noise points   : 107 / 10000 (1.1%)
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 0: 1646 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 1: 5369 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 2: 2199 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 3: 470 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 4: 198 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 5: 6 points
+2026-06-16 15:42:56 | INFO     | src.stage2_Clustering.cluster |     Cluster 6: 5 points
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.cluster |   DBSCAN Silhouette (excl. noise): 0.1876
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.cluster |   K-Means Silhouette:              0.2802
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.cluster |   -> K-Means produces tighter clusters.
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.pipeline | -- STEP 4 / 4 : PROFILE & EXPORT --------------------------
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | Building cluster profiles...
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | ==========================================
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | FINAL CLUSTER PROFILES (BUSINESS INTERPRETATION)
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | ==========================================
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | Using index-based merge with categorical data.
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | 
+                age_mean  age_median  age_std  age_min  age_max  cust_account_balance_mean  cust_account_balance_median  cust_account_balance_std  cust_account_balance_min  cust_account_balance_max  transaction_amount_inr_mean  transaction_amount_inr_median  transaction_amount_inr_std  transaction_amount_inr_min  transaction_amount_inr_max  Customer_Count  Pct_of_Total
+Cluster_Labels                                                                                                                                                                                                                                                                                                                                                                     
+0                  35.19        33.0     9.59        2       89                  198216.55                     44535.60                1147408.69                       0.0              1.150355e+08                      2578.88                         1000.0                     8950.37                         0.0                  1560034.99          342416          49.0
+1                  26.41        25.0     4.88        0       89                   16272.05                      6329.43                  42833.15                       0.0              7.004728e+06                       375.53                          199.0                      738.20                         0.0                    64351.00          356845          51.0
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | 
+(Normalized-space cluster centroids for reference:)
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | 
+                age_ordinal_normalized  cust_account_balance_normalized  transaction_amount_inr_normalized
+Cluster_Labels                                                                                            
+0                               0.5697                           0.5617                             0.5860
+1                              -0.5467                          -0.5390                            -0.5623
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | 
+============================================================
+CLUSTER BUSINESS PROFILES -- DETAILED REPORT
+(Values in TRUE original units)
+============================================================
+
+Cluster 0
+------------------------------------------------------------
+  Population  : 342,416 customers (49.0% of total)
+  age                                : mean=       35.19  median=       33.00  std=      9.59
+  cust_account_balance               : mean=INR   198,216.55  median=INR    44,535.60  std=INR 1,147,408.69
+  transaction_amount_inr             : mean=INR     2,578.88  median=INR     1,000.00  std=INR   8,950.37
+
+Cluster 1
+------------------------------------------------------------
+  Population  : 356,845 customers (51.0% of total)
+  age                                : mean=       26.41  median=       25.00  std=      4.88
+  cust_account_balance               : mean=INR    16,272.05  median=INR     6,329.43  std=INR  42,833.15
+  transaction_amount_inr             : mean=INR       375.53  median=INR       199.00  std=INR     738.20
+
+============================================================
+QUALITY ASSESSMENT
+============================================================
+  Hopkins statistic : 0.9946
+    -> Data has significant clustering tendency.
+  Silhouette score  : 0.2802
+    -> Moderate cluster separation -- boundaries are fuzzy but distinguishable.
+
+============================================================
+Note: 'customer_freq' was EXCLUDED from clustering features because it is near-constant (99.75% = 1) after the KYC drop in Stage 1, contributing zero discriminative power.
+Note: Profile values are in TRUE ORIGINAL SCALE (INR  for amounts, years for age) -- computed by merging cluster labels back to clean_categorical.csv, completely bypassing the StandardScaler / Yeo-Johnson inverse-transform chain.
+============================================================
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_profiles_REAL.csv' -- values in TRUE original units.
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.profile | Exported 'C:\Users\yoyad\Documents\BINUS\CAWU FIVE\Data Mining\project\data\stage2_Clustering\cluster_business_interpretation.txt'.
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.pipeline |   PIPELINE COMPLETE -- 37.2s
+2026-06-16 15:42:57 | INFO     | src.stage2_Clustering.pipeline | ==========================================================
